@@ -1,2 +1,26 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+:root {
+  /* Paleta EuGaranto */
+  --color-primary:        #1B6B3A;
+  --color-primary-light:  #E8F5EE;
+  --color-primary-mid:    #2D9251;
+  --color-accent-orange:  #E8540A;
+  --color-accent-red:     #D32F2F;
+  --color-bg:             #F4F6F4;
+  --color-surface:        #FFFFFF;
+  --color-text-primary:   #111B11;
+  --color-text-secondary: #5C6B5C;
+  --color-border:         #DDE8DD;
+  --color-status-active:  #1B6B3A;
+  --color-status-risk:    #E8540A;
+  --color-status-expired: #D32F2F;
+
+  /* Ionic overrides */
+  --ion-color-primary:             var(--color-primary);
+  --ion-color-primary-contrast:    #ffffff;
+  --ion-background-color:          var(--color-bg);
+  --ion-font-family:               'Plus Jakarta Sans', sans-serif;
+  --ion-toolbar-background:        var(--color-surface);
+  --ion-toolbar-color:             var(--color-text-primary);
+  --ion-item-background:           var(--color-surface);
+  --ion-border-color:              var(--color-border);
+}

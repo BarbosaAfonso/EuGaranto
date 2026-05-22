@@ -1,0 +1,33 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+
+    <ion-tab-button tab="home">
+      <ion-icon name="home-outline"></ion-icon>
+      <ion-label>Início</ion-label>
+    </ion-tab-button>
+
+    <!-- CORREÇÃO HEURÍSTICA #4: ícone de pasta em vez de lupa -->
+    <ion-tab-button tab="categories">
+      <ion-icon name="folder-outline"></ion-icon>
+      <ion-label>Categorias</ion-label>
+    </ion-tab-button>
+
+    <!-- CORREÇÃO HEURÍSTICA #2: FAB com Action Sheet para clareza -->
+    <ion-tab-button (click)="openAdd($event)" class="fab-tab">
+      <div class="fab-btn">
+        <ion-icon name="add"></ion-icon>
+      </div>
+    </ion-tab-button>
+
+    <ion-tab-button tab="alerts">
+      <ion-icon name="notifications-outline"></ion-icon>
+      <ion-label>Alertas</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="profile">
+      <ion-icon name="person-outline"></ion-icon>
+      <ion-label>Perfil</ion-label>
+    </ion-tab-button>
+
+  </ion-tab-bar>
+</ion-tabs>

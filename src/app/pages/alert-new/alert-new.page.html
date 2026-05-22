@@ -1,0 +1,161 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Novo Alerta</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear"><ion-icon name="pencil-outline"></ion-icon></ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="alert-new-content">
+
+  <!-- CORREÇÃO HEURÍSTICA #3: indicador de passo sempre visível, começa no 1 -->
+  <div class="step-indicator">
+    <div class="step" [class.active]="currentStep >= 1" [class.done]="currentStep > 1">
+      <div class="step-circle"><span>1</span></div>
+      <small>DEFINIR</small>
+    </div>
+    <div class="step-line" [class.done]="currentStep > 1"></div>
+    <div class="step" [class.active]="currentStep >= 2" [class.done]="currentStep > 2">
+      <div class="step-circle"><span>2</span></div>
+      <small>MENSAGEM</small>
+    </div>
+    <div class="step-line" [class.done]="currentStep > 2"></div>
+    <div class="step" [class.active]="currentStep >= 3">
+      <div class="step-circle"><span>3</span></div>
+      <small>CONFIRMAR</small>
+    </div>
+  </div>
+
+  <!-- ── Passo 1: Antecedência ── -->
+  <div *ngIf="currentStep === 1" class="step-body">
+    <div class="field-group">
+      <label class="field-label">ANTECEDÊNCIA</label>
+      <div class="chips-row">
+        <div class="day-chip" *ngFor="let d of dayOptions"
+             [class.selected]="selectedDays === d" (click)="selectDays(d)">
+          {{ d }}d
+        </div>
+      </div>
+      <ion-input [value]="selectedDays + ' dias antes'" fill="outline" readonly>
+        <ion-icon name="calendar-outline" slot="end"></ion-icon>
+      </ion-input>
+    </div>
+
+    <div class="trigger-info">
+      <ion-icon name="notifications-outline"></ion-icon>
+      <span>Disparo previsto: <strong>{{ getTriggerDate() }}</strong></span>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">MENSAGEM DO ALERTA</label>
+      <ion-textarea [(ngModel)]="alertMessage" fill="outline" rows="3"
+                    placeholder="ex: Realizar limpeza técnica preventiva" autoGrow></ion-textarea>
+    </div>
+
+    <ion-button expand="block" class="btn-primary" (click)="nextStep()">
+      Continuar <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- ── Passo 2: Tipo de notificação ── -->
+  <div *ngIf="currentStep === 2" class="step-body">
+    <h3 class="step-subtitle">Tipo de notificação</h3>
+
+    <ion-list lines="none" class="notif-list">
+      <ion-item class="notif-item">
+        <ion-icon name="notifications-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h3>Notificação Push</h3><p>Alerta no ecrã do telemóvel</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="notifyPush" color="success" slot="end"></ion-toggle>
+      </ion-item>
+      <ion-item class="notif-item">
+        <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h3>Email</h3><p>Enviar para o email registado</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="notifyEmail" color="success" slot="end"></ion-toggle>
+      </ion-item>
+    </ion-list>
+
+    <ion-button expand="block" class="btn-primary" (click)="nextStep()">
+      Continuar <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+    </ion-button>
+    <ion-button expand="block" fill="clear" (click)="prevStep()">Voltar</ion-button>
+  </div>
+
+  <!-- ── Passo 3: Confirmação ── -->
+  <div *ngIf="currentStep === 3" class="step-body">
+    <p class="confirm-hint">Confirma os detalhes do alerta antes de guardar.</p>
+
+    <ion-card class="summary-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="notifications-outline"></ion-icon> Resumo do Alerta
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="inset">
+          <ion-item>
+            <ion-label color="medium">PRODUTO</ion-label>
+            <ion-note slot="end">{{ productName }}</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label color="medium">ANTECEDÊNCIA</ion-label>
+            <ion-note slot="end">{{ selectedDays }} dias antes</ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label color="medium">DISPARO PREVISTO</ion-label>
+            <ion-note slot="end">
+              <ion-icon name="calendar-outline"></ion-icon> {{ getTriggerDate() }}
+            </ion-note>
+          </ion-item>
+          <ion-item>
+            <ion-label color="medium">NOTIFICAÇÃO</ion-label>
+            <ion-note slot="end" class="badges">
+              <span class="notif-badge push" *ngIf="notifyPush">PUSH</span>
+              <span class="notif-badge email" *ngIf="notifyEmail">EMAIL</span>
+            </ion-note>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label color="medium">MENSAGEM</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label class="message-preview">{{ alertMessage }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Pré-visualização da notificação -->
+    <div class="preview-label">PRÉ-VISUALIZAÇÃO</div>
+    <div class="notif-preview">
+      <div class="notif-app-icon">
+        <ion-icon name="shield-checkmark"></ion-icon>
+      </div>
+      <div class="notif-body">
+        <div class="notif-top">
+          <span class="notif-app-name">EuGaranto</span>
+          <span class="notif-time">agora</span>
+        </div>
+        <strong>🔔 Alerta de Manutenção</strong>
+        <p>{{ alertMessage }} — {{ productName }}</p>
+      </div>
+    </div>
+
+    <div class="edit-config" (click)="prevStep()">
+      <ion-icon name="pencil-outline" color="success"></ion-icon>
+      <span>Editar configuração</span>
+    </div>
+
+    <ion-button expand="block" class="btn-primary" (click)="saveAlert()">
+      <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+      Confirmar e Guardar Alerta
+    </ion-button>
+  </div>
+
+</ion-content>

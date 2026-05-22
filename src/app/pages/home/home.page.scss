@@ -1,0 +1,80 @@
+.home-content { --background: var(--color-bg); }
+
+.brand-title { color: var(--color-primary); font-weight: 800; font-size: 22px; }
+.avatar-icon { font-size: 32px; color: var(--color-text-secondary); }
+
+.greeting-section {
+  padding: 20px 20px 8px;
+  .greeting-sub  { color: var(--color-text-secondary); font-size: 13px; margin: 0 0 4px; }
+  .greeting-title { font-size: 28px; font-weight: 800; margin: 0; line-height: 1.2; }
+}
+
+.search-wrap { padding: 12px 16px; }
+
+/* Stats */
+.stats-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; padding: 0 20px 20px;
+
+  .stat-card {
+    background: var(--color-surface); border-radius: 16px;
+    padding: 16px; display: flex; flex-direction: column; gap: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+
+    .stat-icon  { font-size: 22px; color: var(--color-primary); }
+    .stat-number { font-size: 32px; font-weight: 800; color: var(--color-primary); }
+    .stat-label  { font-size: 10px; font-weight: 700; letter-spacing: .5px;
+                   color: var(--color-text-secondary); }
+
+    &.risk .stat-icon,
+    &.risk .stat-number { color: var(--color-text-secondary); }
+    &.risk.has-risk .stat-icon,
+    &.risk.has-risk .stat-number { color: var(--color-accent-orange); }
+    &.risk { background: #fff8f5; }
+  }
+}
+
+/* Section header */
+.section-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 20px 12px;
+  .section-title { font-size: 12px; font-weight: 700; letter-spacing: .5px; color: var(--color-text-secondary); }
+  .ver-tudo      { font-size: 12px; font-weight: 700; color: var(--color-primary); cursor: pointer; }
+}
+
+/* Warranty list */
+.warranties-list { padding: 0 16px; }
+
+.warranty-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--color-surface); border-radius: 14px;
+  padding: 14px 16px; margin-bottom: 10px;
+  cursor: pointer; transition: transform .1s;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  &:active { transform: scale(.98); }
+
+  .w-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--color-primary-light);
+    display: flex; align-items: center; justify-content: center;
+    ion-icon { font-size: 22px; color: var(--color-primary); }
+  }
+  .w-info  { flex: 1; }
+  .w-name  { display: block; font-weight: 700; font-size: 15px; }
+  .w-meta  { display: block; font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+}
+
+/* Status badges */
+.status-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .4px;
+  padding: 4px 10px; border-radius: 20px;
+  &.active   { background: #E8F5EE; color: var(--color-primary); }
+  &.risk     { background: #FFF0E8; color: var(--color-accent-orange); }
+  &.expired  { background: #FFEBEE; color: var(--color-accent-red); }
+}
+
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  ion-icon { font-size: 48px; color: var(--color-border); }
+  p { color: var(--color-text-secondary); }
+}

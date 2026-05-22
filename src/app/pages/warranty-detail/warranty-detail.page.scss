@@ -1,0 +1,78 @@
+.detail-content { --background: var(--color-bg); }
+
+.status-header {
+  margin: 16px; border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700;
+
+  &.active  { background: var(--color-primary-light); color: var(--color-primary); }
+  &.risk    { background: #FFF0E8; color: var(--color-accent-orange); }
+  &.expired { background: #FFEBEE; color: var(--color-accent-red); }
+
+  ion-icon { font-size: 18px; }
+}
+
+.info-card { margin: 0 16px 16px; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.07); }
+
+.coverage-wrap {
+  margin-top: 12px;
+  .coverage-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    color: var(--color-text-secondary); margin-bottom: 6px;
+  }
+  .coverage-bar {
+    height: 6px; background: var(--color-border); border-radius: 3px; overflow: hidden;
+    .coverage-fill {
+      height: 100%; background: var(--color-primary); border-radius: 3px;
+      transition: width .6s ease;
+    }
+  }
+}
+
+.section-header {
+  font-size: 11px; font-weight: 700; letter-spacing: .5px;
+  color: var(--color-text-secondary);
+  padding: 8px 20px 8px;
+}
+
+.alert-item-card { margin: 0 16px 10px; border-radius: 14px; }
+
+.alert-row {
+  display: flex; align-items: center; gap: 12px;
+  .alert-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--color-border);
+    &.on { background: var(--color-primary); }
+  }
+  .alert-info { flex: 1;
+    strong { display: block; }
+    small  { font-size: 11px; color: var(--color-text-secondary); }
+  }
+}
+
+.btn-new-alert {
+  --background: var(--color-primary); --border-radius: 14px; margin: 8px 16px;
+  height: 52px; font-weight: 700;
+}
+
+.docs-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 16px 16px;
+  .doc-card { border-radius: 14px; margin: 0;
+    ion-card-content {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      ion-icon { font-size: 28px; color: var(--color-primary); }
+      strong   { font-size: 13px; }
+      small    { font-size: 11px; color: var(--color-text-secondary); }
+    }
+  }
+}
+
+.storage-detail-card { margin: 0 16px 24px; border-radius: 14px; overflow: hidden;
+  .storage-row {
+    display: flex; align-items: center; gap: 12px;
+    ion-icon:first-child { font-size: 22px; color: var(--color-primary); }
+    div { flex: 1; strong { display: block; } small { font-size: 12px; color: var(--color-text-secondary); } }
+  }
+  .storage-img { width: 100%; height: 140px; object-fit: cover; margin-top: 12px; border-radius: 10px; }
+}

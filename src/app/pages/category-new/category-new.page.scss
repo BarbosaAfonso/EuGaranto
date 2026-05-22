@@ -1,0 +1,60 @@
+.cat-new-content { --background: var(--color-bg); }
+
+.field-group {
+  padding: 0 20px; margin-bottom: 24px;
+  .field-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .6px;
+    color: var(--color-text-secondary); display: block; margin-bottom: 8px;
+  }
+  ion-input { --border-radius: 12px; }
+}
+
+/* ── Ícones ── */
+.icon-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  .icon-opt {
+    aspect-ratio: 1; border-radius: 14px;
+    background: var(--color-surface); border: 2px solid var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .2s;
+    ion-icon { font-size: 24px; color: var(--color-text-secondary); }
+    &.selected { border-color: var(--color-primary); background: var(--color-primary-light); }
+  }
+}
+
+/* ── Cores ── */
+.colors-row {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  .color-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform .2s;
+    border: 3px solid transparent;
+    &.selected { transform: scale(1.15); border-color: rgba(0,0,0,.2); }
+    ion-icon { font-size: 16px; }
+  }
+}
+
+/* ── Prévia ── */
+.preview-card {
+  background: var(--color-surface); border-radius: 14px; padding: 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+
+  .preview-status { font-size: 10px; font-weight: 700; color: var(--color-primary);
+    display: block; margin-bottom: 4px; }
+  .preview-name   { font-size: 17px; font-weight: 700; display: block; margin-bottom: 2px; }
+  .preview-count  { font-size: 12px; color: var(--color-text-secondary); }
+
+  .preview-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    ion-icon { font-size: 26px; }
+  }
+}
+
+.btn-primary {
+  --background: var(--color-primary); --border-radius: 14px;
+  --box-shadow: 0 4px 16px rgba(27,107,58,.3);
+  height: 52px; font-weight: 700; margin: 0 20px 32px;
+}

@@ -1,0 +1,55 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Categorias</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="newCategory()">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="cat-content">
+
+  <!-- CORREÇÃO HEURÍSTICA #6: feedback só após ação, com nome correto -->
+  <div class="success-banner animated" *ngIf="showBanner">
+    <ion-icon name="checkmark-circle-outline"></ion-icon>
+    {{ bannerMsg }}
+    <ion-button fill="clear" size="small" (click)="showBanner = false">
+      <ion-icon name="close-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="inventory-tag">INVENTÁRIO</div>
+  <h1 class="page-title">Gerir Categorias</h1>
+
+  <ion-list lines="none" class="cat-list">
+    <ion-item *ngFor="let cat of categories" class="cat-item"
+              (click)="openCategory(cat)" detail="true">
+      <div class="cat-icon" [style.background]="cat.color + '22'" slot="start">
+        <ion-icon [name]="cat.icon" [style.color]="cat.color"></ion-icon>
+      </div>
+      <ion-label>
+        <h3>{{ cat.name }}</h3>
+        <p>{{ getItemCount(cat.id) }} itens registados</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" fill="outline" class="btn-new-cat" (click)="newCategory()">
+    <ion-icon name="add-outline" slot="start"></ion-icon>
+    + Nova Categoria
+  </ion-button>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <span class="stat-lbl">TOTAL DE CATEGORIAS</span>
+      <span class="stat-val">{{ categories.length | number:'2.0' }}</span>
+    </div>
+    <div class="stat-box primary">
+      <span class="stat-lbl">GARANTIAS ATIVAS</span>
+      <span class="stat-val">{{ totalWarranties }}</span>
+    </div>
+  </div>
+
+</ion-content>

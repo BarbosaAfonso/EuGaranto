@@ -1,0 +1,116 @@
+.alert-new-content { --background: var(--color-bg); }
+
+/* ── Step indicator ── */
+.step-indicator {
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 24px 20px 8px; gap: 0;
+
+  .step {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    .step-circle {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--color-border); border: 2px solid var(--color-border);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: #aaa;
+      transition: all .3s;
+    }
+    small { font-size: 10px; font-weight: 700; letter-spacing: .4px; color: #aaa; }
+    &.active .step-circle { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+    &.active small         { color: var(--color-primary); }
+    &.done  .step-circle   { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+  }
+
+  .step-line {
+    flex: 1; height: 2px; background: var(--color-border);
+    margin-top: 18px; transition: background .3s;
+    &.done { background: var(--color-primary); }
+  }
+}
+
+.step-body { padding: 16px 20px; }
+
+/* ── Chips ── */
+.chips-row {
+  display: flex; gap: 8px; margin-bottom: 12px;
+  .day-chip {
+    padding: 8px 16px; border-radius: 10px;
+    border: 2px solid var(--color-border);
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    transition: all .2s;
+    &.selected {
+      background: var(--color-primary); border-color: var(--color-primary); color: #fff;
+    }
+  }
+}
+
+.trigger-info {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--color-primary-light); border-radius: 12px;
+  padding: 12px 16px; margin-bottom: 20px;
+  color: var(--color-primary); font-size: 14px;
+  ion-icon { font-size: 18px; }
+}
+
+.field-group {
+  margin-bottom: 16px;
+  .field-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .6px;
+    color: var(--color-text-secondary); display: block; margin-bottom: 6px;
+  }
+  ion-input, ion-textarea { --border-radius: 12px; }
+}
+
+.step-subtitle { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+
+.notif-list .notif-item { --border-radius: 14px; --background: var(--color-surface); margin-bottom: 10px; }
+
+.btn-primary {
+  --background: var(--color-primary); --border-radius: 14px;
+  --box-shadow: 0 4px 16px rgba(27,107,58,.3);
+  height: 52px; font-weight: 700; margin-top: 8px;
+}
+
+/* ── Confirmação ── */
+.confirm-hint { color: var(--color-text-secondary); font-size: 14px; margin-bottom: 16px; }
+
+.summary-card { border-radius: 16px;
+  ion-card-title { display: flex; align-items: center; gap: 8px; font-size: 16px; }
+  .message-preview { font-style: italic; }
+}
+
+.badges { display: flex; gap: 6px; }
+.notif-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+  &.push  { background: var(--color-primary-light); color: var(--color-primary); }
+  &.email { background: #E3F2FD; color: #1565C0; }
+}
+
+/* ── Preview notificação ── */
+.preview-label { font-size: 11px; font-weight: 700; letter-spacing: .5px;
+  color: var(--color-text-secondary); margin: 16px 0 8px; }
+
+.notif-preview {
+  background: var(--color-surface); border-radius: 14px;
+  padding: 14px; display: flex; gap: 12px; margin-bottom: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+
+  .notif-app-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--color-primary);
+    display: flex; align-items: center; justify-content: center;
+    ion-icon { font-size: 22px; color: #fff; }
+  }
+  .notif-body { flex: 1;
+    .notif-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .notif-app-name { font-size: 12px; font-weight: 700; }
+    .notif-time     { font-size: 11px; color: var(--color-text-secondary); }
+    strong { display: block; font-size: 13px; }
+    p      { font-size: 12px; color: var(--color-text-secondary); margin: 2px 0 0; }
+  }
+}
+
+.edit-config {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  color: var(--color-primary); font-size: 14px; font-weight: 600;
+  cursor: pointer; margin-bottom: 16px;
+}

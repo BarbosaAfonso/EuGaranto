@@ -1,0 +1,66 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nova Categoria</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="cat-new-content">
+
+  <form [formGroup]="categoryForm">
+
+    <div class="field-group">
+      <label class="field-label">NOME DA CATEGORIA</label>
+      <ion-input formControlName="name" placeholder="ex: Eletrodomésticos" fill="outline">
+        <ion-icon *ngIf="categoryForm.get('name')?.valid && categoryForm.get('name')?.dirty"
+                  name="checkmark-circle" slot="end" color="success"></ion-icon>
+      </ion-input>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">ÍCONE</label>
+      <div class="icon-grid">
+        <div class="icon-opt" *ngFor="let icon of iconOptions"
+             [class.selected]="selectedIcon === icon" (click)="selectIcon(icon)">
+          <ion-icon [name]="icon" [style.color]="selectedIcon === icon ? selectedColor : ''"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">COR DE DESTAQUE</label>
+      <div class="colors-row">
+        <div class="color-dot" *ngFor="let c of colorOptions"
+             [class.selected]="selectedColor === c"
+             [style.background]="c" (click)="selectColor(c)">
+          <ion-icon *ngIf="selectedColor === c" name="checkmark-outline" color="light"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORREÇÃO HEURÍSTICA #5: "Prévia da categoria" em vez de "Prévia do card" -->
+    <div class="field-group">
+      <label class="field-label">PRÉVIA DA CATEGORIA</label>
+      <div class="preview-card">
+        <div class="preview-left">
+          <span class="preview-status">ATIVO</span>
+          <strong class="preview-name">{{ categoryForm.get('name')?.value || 'Nova Categoria' }}</strong>
+          <span class="preview-count">0 itens arquivados</span>
+        </div>
+        <div class="preview-icon" [style.background]="selectedColor + '22'">
+          <ion-icon [name]="selectedIcon" [style.color]="selectedColor"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+  <ion-button expand="block" class="btn-primary"
+              [disabled]="categoryForm.invalid" (click)="createCategory()">
+    Criar Categoria
+    <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+  </ion-button>
+
+</ion-content>

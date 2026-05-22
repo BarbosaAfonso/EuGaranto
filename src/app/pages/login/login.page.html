@@ -1,0 +1,67 @@
+<ion-content class="login-content" fullscreen>
+  <div class="login-wrapper">
+
+    <!-- Área do logotipo -->
+    <div class="logo-area">
+      <div class="logo-icon">
+        <ion-icon name="shield-checkmark"></ion-icon>
+      </div>
+      <h1 class="app-title">EuGaranto</h1>
+      <p class="app-subtitle">O teu gestor de garantias inteligente</p>
+      <div class="feature-pills">
+        <span class="pill"><ion-icon name="camera-outline"></ion-icon> OCR automático</span>
+        <span class="pill"><ion-icon name="notifications-outline"></ion-icon> Alertas</span>
+        <span class="pill"><ion-icon name="folder-outline"></ion-icon> Categorias</span>
+      </div>
+    </div>
+
+    <!-- Formulário de login -->
+    <div class="form-card">
+      <h2>Entrar na conta</h2>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+
+        <div class="field-group">
+          <label class="field-label">EMAIL</label>
+          <ion-input formControlName="email" type="email"
+                     placeholder="exemplo@email.pt" fill="outline"></ion-input>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">PALAVRA-PASSE</label>
+          <ion-input formControlName="password"
+                     [type]="showPassword ? 'text' : 'password'"
+                     placeholder="••••••••" fill="outline">
+            <ion-button slot="end" fill="clear" (click)="togglePassword()">
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </ion-button>
+          </ion-input>
+        </div>
+
+        <div class="forgot-row">
+          <span class="forgot-link">Esqueceste a palavra-passe?</span>
+        </div>
+
+        <ion-button expand="block" class="btn-login" type="submit"
+                    [disabled]="loginForm.invalid || loading">
+          <ion-spinner *ngIf="loading" name="crescent" slot="start"></ion-spinner>
+          Entrar
+        </ion-button>
+
+      </form>
+
+      <div class="divider"><span>ou</span></div>
+
+      <ion-button expand="block" fill="outline" class="btn-google"
+                  (click)="loginWithGoogle()">
+        <ion-icon name="logo-google" slot="start"></ion-icon>
+        Continuar com Google
+      </ion-button>
+
+      <p class="register-text">
+        Não tens conta? <span class="register-link" (click)="onLogin()">Criar conta grátis</span>
+      </p>
+    </div>
+
+  </div>
+</ion-content>
