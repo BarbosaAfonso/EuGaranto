@@ -1,8 +1,8 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Warranty, getWarrantyStatus, getWarrantyTitle } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
-import { Warranty, getWarrantyStatus, getRemainingLabel } from '../../models/models';
 
 @Component({
   standalone: false,
@@ -10,64 +10,72 @@ import { Warranty, getWarrantyStatus, getRemainingLabel } from '../../models/mod
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
 })
-export class HomePage implements OnDestroy {
-
+export class HomePage implements OnInit, OnDestroy {
   warranties: Warranty[] = [];
   filteredWarranties: Warranty[] = [];
   searchQuery = '';
   activeCount = 0;
-  riskCount   = 0;
+  expiringSoonCount = 0;
 
-  private sub: Subscription;
+  private sub?: Subscription;
 
   constructor(
     private warrantyService: WarrantyService,
     private router: Router,
-  ) {
-    // Subscrever a alterações em tempo real
-    this.sub = this.warrantyService.warranties$.subscribe(list => {
-      this.warranties         = list;
-      this.filteredWarranties = [...list];
-      this.activeCount        = this.warrantyService.getActiveCount();
-      this.riskCount          = this.warrantyService.getRiskCount();
+  ) {}
+
+  ngOnInit() {
+    this.sub = this.warrantyService.warranties$.subscribe(warranties => {
+      this.warranties = warranties;
+      this.applyFilter();
+      this.activeCount = this.warrantyService.getActiveCount();
+      this.expiringSoonCount = this.warrantyService.getExpiringSoonCount();
     });
   }
 
-  /** Atualiza dados ao entrar na página */
   ionViewWillEnter() {
     this.warrantyService.warranties$.next(this.warrantyService.getWarranties());
   }
 
-  ngOnDestroy() { this.sub.unsubscribe(); }
-
-  /** Filtra garantias pelo texto de pesquisa */
-  onSearch() {
-    const q = this.searchQuery.toLowerCase();
-    this.filteredWarranties = this.warranties.filter(w =>
-      w.productName.toLowerCase().includes(q) ||
-      (w.brand?.toLowerCase().includes(q) ?? false)
-    );
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
   }
 
-  /** Navega para detalhe da garantia, passando o ID como parâmetro (Req. 5) */
-  openWarranty(id: string) {
+  onSearch() {
+    this.applyFilter();
+  }
+
+  goToDetail(id: string) {
     this.router.navigate(['/warranty-detail', id]);
   }
 
-  getStatus(expiryDate: string): string { return getWarrantyStatus(expiryDate); }
-
-  getStatusLabel(expiryDate: string): string {
-    const s = getWarrantyStatus(expiryDate);
-    return s === 'active' ? 'ATIVA' : s === 'risk' ? 'EM RISCO' : 'EXPIRADA';
+  getTitle(warranty: Warranty): string {
+    return getWarrantyTitle(warranty);
   }
 
-  getRemainingLabel(d: string): string { return getRemainingLabel(d); }
-
-  formatDate(d: string): string {
-    return new Date(d).toLocaleDateString('pt-PT', { month: 'short', year: 'numeric' });
+  getStatusClass(warranty: Warranty): string {
+    return getWarrantyStatus(warranty);
   }
 
-  getCategoryIcon(catId: string): string {
-    return this.warrantyService.getCategory(catId)?.icon || 'cube-outline';
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString('pt-PT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
+
+  private applyFilter() {
+    const query = this.searchQuery.trim().toLowerCase();
+
+    if (!query) {
+      this.filteredWarranties = [...this.warranties];
+      return;
+    }
+
+    this.filteredWarranties = this.warranties.filter(warranty =>
+      this.getTitle(warranty).toLowerCase().includes(query) ||
+      warranty.category.toLowerCase().includes(query)
+    );
   }
 }

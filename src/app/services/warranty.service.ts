@@ -1,70 +1,34 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Storage } from '@ionic/storage-angular';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { Warranty, Category, Alert, getWarrantyStatus } from '../models/models';
-
-/** Chaves de armazenamento no Ionic Storage */
-const KEYS = {
-  WARRANTIES: 'eg_warranties',
-  CATEGORIES: 'eg_categories',
-  ALERTS:     'eg_alerts',
-  SEEDED:     'eg_seeded',
-};
+import { Alert, Category, Warranty, getWarrantyStatus } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class WarrantyService {
-
-  // Cache em memória
   private warranties: Warranty[] = [];
   private categories: Category[] = [];
   private alerts: Alert[] = [];
-
-  // Subjects reativos para subscrição nos componentes
-  warranties$ = new BehaviorSubject<Warranty[]>([]);
-  categories$ = new BehaviorSubject<Category[]>([]);
-  alerts$     = new BehaviorSubject<Alert[]>([]);
-
-  private _storage: Storage | null = null;
   private initialized = false;
 
-  constructor(
-    private storage: Storage,
-    private http: HttpClient,
-  ) {}
+  warranties$ = new BehaviorSubject<Warranty[]>([]);
+  categories$ = new BehaviorSubject<Category[]>([]);
+  alerts$ = new BehaviorSubject<Alert[]>([]);
 
-  /**
-   * Inicializa o Ionic Storage e carrega dados.
-   * Na primeira execução, lê do ficheiro JSON (seed.json).
-   * Nas execuções seguintes, lê do Storage.
-   */
+  constructor(private http: HttpClient) {}
+
   async init(): Promise<void> {
     if (this.initialized) return;
 
-    this._storage = await this.storage.create();
-    const seeded = await this._storage.get(KEYS.SEEDED);
+    const warranties = await firstValueFrom(
+      this.http.get<Warranty[]>('assets/data/warranties.json')
+    );
+    const seed = await firstValueFrom(
+      this.http.get<{ categories: Category[]; alerts: Alert[] }>('assets/data/seed.json')
+    );
 
-    if (!seeded) {
-      // Primeira execução: carregar dados do ficheiro JSON (Req. 10)
-      const seed = await firstValueFrom(
-        this.http.get<{ warranties: Warranty[]; categories: Category[]; alerts: Alert[] }>(
-          'assets/data/seed.json'
-        )
-      );
-      this.warranties = seed.warranties;
-      this.categories = seed.categories;
-      this.alerts     = seed.alerts || [];
-
-      await this._storage.set(KEYS.WARRANTIES, this.warranties);
-      await this._storage.set(KEYS.CATEGORIES, this.categories);
-      await this._storage.set(KEYS.ALERTS,     this.alerts);
-      await this._storage.set(KEYS.SEEDED,     true);
-    } else {
-      // Execuções seguintes: carregar do Ionic Storage (Req. 9)
-      this.warranties = (await this._storage.get(KEYS.WARRANTIES)) || [];
-      this.categories = (await this._storage.get(KEYS.CATEGORIES)) || [];
-      this.alerts     = (await this._storage.get(KEYS.ALERTS))     || [];
-    }
+    this.categories = seed.categories || [];
+    this.alerts = seed.alerts || [];
+    this.warranties = warranties.map(warranty => this.normalizeWarranty(warranty));
 
     this.warranties$.next([...this.warranties]);
     this.categories$.next([...this.categories]);
@@ -72,135 +36,171 @@ export class WarrantyService {
     this.initialized = true;
   }
 
-  // ─── Warranties ────────────────────────────────────────────
+  getWarranties(): Warranty[] {
+    return [...this.warranties];
+  }
 
-  /** Retorna todas as garantias (cópia do array) */
-  getWarranties(): Warranty[] { return [...this.warranties]; }
-
-  /** Retorna uma garantia pelo ID */
   getWarranty(id: string): Warranty | undefined {
-    return this.warranties.find(w => w.id === id);
+    return this.warranties.find(warranty => warranty.id === id);
   }
 
-  /** Guarda (cria ou atualiza) uma garantia */
-  async saveWarranty(w: Warranty): Promise<void> {
-    const idx = this.warranties.findIndex(x => x.id === w.id);
-    idx >= 0 ? this.warranties.splice(idx, 1, w) : this.warranties.push(w);
-    await this._storage!.set(KEYS.WARRANTIES, this.warranties);
+  async saveWarranty(warranty: Warranty): Promise<void> {
+    const normalized = this.normalizeWarranty(warranty);
+    const index = this.warranties.findIndex(item => item.id === normalized.id);
+
+    if (index >= 0) {
+      this.warranties.splice(index, 1, normalized);
+    } else {
+      this.warranties.push(normalized);
+    }
+
     this.warranties$.next([...this.warranties]);
   }
 
-  /** Remove uma garantia pelo ID */
   async deleteWarranty(id: string): Promise<void> {
-    this.warranties = this.warranties.filter(w => w.id !== id);
-    await this._storage!.set(KEYS.WARRANTIES, this.warranties);
+    this.warranties = this.warranties.filter(warranty => warranty.id !== id);
     this.warranties$.next([...this.warranties]);
   }
 
-  /** Número de garantias com estado "ativa" */
   getActiveCount(): number {
-    return this.warranties.filter(w => getWarrantyStatus(w.expiryDate) === 'active').length;
+    return this.warranties.filter(warranty => getWarrantyStatus(warranty) === 'active').length;
   }
 
-  /** Número de garantias em risco ou expiradas */
+  getExpiringSoonCount(): number {
+    return this.warranties.filter(warranty => getWarrantyStatus(warranty) === 'risk').length;
+  }
+
   getRiskCount(): number {
-    return this.warranties.filter(w => getWarrantyStatus(w.expiryDate) !== 'active').length;
+    return this.getExpiringSoonCount();
   }
 
-  // ─── Categories ────────────────────────────────────────────
+  getCategories(): Category[] {
+    return [...this.categories];
+  }
 
-  /** Retorna todas as categorias */
-  getCategories(): Category[] { return [...this.categories]; }
-
-  /** Retorna uma categoria pelo ID */
   getCategory(id: string): Category | undefined {
-    return this.categories.find(c => c.id === id);
+    return this.categories.find(category => category.id === id);
   }
 
-  /** Guarda (cria ou atualiza) uma categoria */
-  async saveCategory(c: Category): Promise<void> {
-    const idx = this.categories.findIndex(x => x.id === c.id);
-    idx >= 0 ? this.categories.splice(idx, 1, c) : this.categories.push(c);
-    await this._storage!.set(KEYS.CATEGORIES, this.categories);
+  async saveCategory(category: Category): Promise<void> {
+    const index = this.categories.findIndex(item => item.id === category.id);
+    if (index >= 0) {
+      this.categories.splice(index, 1, category);
+    } else {
+      this.categories.push(category);
+    }
+
     this.categories$.next([...this.categories]);
   }
 
-  /** Remove uma categoria pelo ID */
   async deleteCategory(id: string): Promise<void> {
-    this.categories = this.categories.filter(c => c.id !== id);
-    await this._storage!.set(KEYS.CATEGORIES, this.categories);
+    this.categories = this.categories.filter(category => category.id !== id);
     this.categories$.next([...this.categories]);
   }
 
-  /** Número de garantias associadas a uma categoria */
   getCategoryItemCount(catId: string): number {
-    return this.warranties.filter(w => w.categoryId === catId).length;
+    return this.warranties.filter(warranty => warranty.categoryId === catId).length;
   }
 
-  /** Move uma garantia para outra categoria */
   async moveWarrantyToCategory(warrantyId: string, categoryId: string): Promise<void> {
-    const w = this.warranties.find(x => x.id === warrantyId);
-    if (w) {
-      w.categoryId = categoryId;
-      await this._storage!.set(KEYS.WARRANTIES, this.warranties);
-      this.warranties$.next([...this.warranties]);
-    }
+    const warranty = this.warranties.find(item => item.id === warrantyId);
+    if (!warranty) return;
+
+    warranty.categoryId = categoryId;
+    warranty.category = this.getCategory(categoryId)?.name || warranty.category;
+    this.warranties$.next([...this.warranties]);
   }
 
-  // ─── Alerts ────────────────────────────────────────────────
+  getAlerts(): Alert[] {
+    return [...this.alerts];
+  }
 
-  /** Retorna todos os alertas */
-  getAlerts(): Alert[] { return [...this.alerts]; }
-
-  /** Retorna alertas de uma garantia específica */
   getAlertsForWarranty(warrantyId: string): Alert[] {
-    return this.alerts.filter(a => a.warrantyId === warrantyId);
+    return this.alerts.filter(alert => alert.warrantyId === warrantyId);
   }
 
-  /** Guarda (cria ou atualiza) um alerta */
-  async saveAlert(a: Alert): Promise<void> {
-    const idx = this.alerts.findIndex(x => x.id === a.id);
-    idx >= 0 ? this.alerts.splice(idx, 1, a) : this.alerts.push(a);
-    await this._storage!.set(KEYS.ALERTS, this.alerts);
-    this.alerts$.next([...this.alerts]);
-  }
-
-  /** Remove um alerta pelo ID */
-  async deleteAlert(id: string): Promise<void> {
-    this.alerts = this.alerts.filter(a => a.id !== id);
-    await this._storage!.set(KEYS.ALERTS, this.alerts);
-    this.alerts$.next([...this.alerts]);
-  }
-
-  /** Ativa/desativa um alerta */
-  async toggleAlert(id: string): Promise<void> {
-    const alert = this.alerts.find(a => a.id === id);
-    if (alert) {
-      alert.enabled = !alert.enabled;
-      await this._storage!.set(KEYS.ALERTS, this.alerts);
-      this.alerts$.next([...this.alerts]);
+  async saveAlert(alert: Alert): Promise<void> {
+    const index = this.alerts.findIndex(item => item.id === alert.id);
+    if (index >= 0) {
+      this.alerts.splice(index, 1, alert);
+    } else {
+      this.alerts.push(alert);
     }
+
+    this.alerts$.next([...this.alerts]);
   }
 
-  // ─── Helpers ───────────────────────────────────────────────
+  async deleteAlert(id: string): Promise<void> {
+    this.alerts = this.alerts.filter(alert => alert.id !== id);
+    this.alerts$.next([...this.alerts]);
+  }
 
-  /** Gera um ID único */
+  async toggleAlert(id: string): Promise<void> {
+    const alert = this.alerts.find(item => item.id === id);
+    if (!alert) return;
+
+    alert.enabled = !alert.enabled;
+    this.alerts$.next([...this.alerts]);
+  }
+
   generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).slice(2);
   }
 
-  /** Calcula data de expiração a partir da data de compra + meses de garantia */
   calcExpiryDate(purchaseDate: string, months: number): string {
-    const d = new Date(purchaseDate);
-    d.setMonth(d.getMonth() + months);
-    return d.toISOString().split('T')[0];
+    const date = new Date(purchaseDate);
+    date.setMonth(date.getMonth() + months);
+    return date.toISOString().split('T')[0];
   }
 
-  /** Calcula percentagem de cobertura (tempo decorrido / tempo total) */
   getCoveragePercent(purchaseDate: string, expiryDate: string): number {
     const start = new Date(purchaseDate).getTime();
-    const end   = new Date(expiryDate).getTime();
-    const now   = Date.now();
+    const end = new Date(expiryDate).getTime();
+    const now = Date.now();
     return Math.min(100, Math.max(0, Math.round(((now - start) / (end - start)) * 100)));
+  }
+
+  private normalizeWarranty(warranty: Warranty): Warranty {
+    const purchaseDate = warranty.purchaseDate;
+    const endDate = warranty.endDate || warranty.expiryDate || purchaseDate;
+    const category = warranty.category || this.getCategory(warranty.categoryId || '')?.name || 'Sem categoria';
+    const categoryId = warranty.categoryId || this.findCategoryIdByName(category);
+    const title = warranty.title || warranty.productName || 'Garantia sem nome';
+    const status = this.mapStatus(warranty.status, endDate);
+
+    return {
+      ...warranty,
+      title,
+      productName: warranty.productName || title,
+      purchaseDate,
+      endDate,
+      expiryDate: endDate,
+      status,
+      category,
+      categoryId,
+      warrantyMonths: warranty.warrantyMonths ?? this.getWarrantyMonths(purchaseDate, endDate),
+      createdAt: warranty.createdAt || new Date().toISOString(),
+    };
+  }
+
+  private mapStatus(status: Warranty['status'] | undefined, endDate: string): Warranty['status'] {
+    if (status === 'ATIVA' || status === 'EM RISCO' || status === 'EXPIRADA') {
+      return status;
+    }
+
+    const computedStatus = getWarrantyStatus(endDate);
+    if (computedStatus === 'active') return 'ATIVA';
+    if (computedStatus === 'risk') return 'EM RISCO';
+    return 'EXPIRADA';
+  }
+
+  private findCategoryIdByName(categoryName: string): string {
+    return this.categories.find(category => category.name === categoryName)?.id || '';
+  }
+
+  private getWarrantyMonths(purchaseDate: string, endDate: string): number {
+    const start = new Date(purchaseDate);
+    const end = new Date(endDate);
+    return Math.max(1, (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()));
   }
 }
