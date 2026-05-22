@@ -9,5 +9,9 @@ import { Router } from '@angular/router';
 })
 export class ProfilePage {
   constructor(private router: Router) {}
-  logout() { this.router.navigate(['/login'], { replaceUrl: true }); }
+
+  logout() {
+    console.log('Sessão terminada');
+    this.router.navigate(['/login']);
+  }
 }

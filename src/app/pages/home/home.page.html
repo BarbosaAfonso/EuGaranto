@@ -1,69 +1,63 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-title class="brand-title">EuGaranto</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" routerLink="/tabs/profile">
-        <ion-icon name="person-circle-outline" class="avatar-icon"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+    <div class="hero-copy">
+      <p class="hero-subtitle">OLÁ, SR. ALBERTO 👋</p>
+      <h1 class="hero-title">Bem-vindo ao seu arquivo.</h1>
+    </div>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="home-content">
-
-  <div class="greeting-section">
-    <p class="greeting-sub">OLÁ, SR. ALBERTO 👋</p>
-    <h1 class="greeting-title">Bem-vindo ao<br>seu arquivo.</h1>
-  </div>
-
-  <!-- Barra de pesquisa -->
-  <div class="search-wrap">
-    <ion-searchbar placeholder="Pesquisar garantias..."
-                   [(ngModel)]="searchQuery"
-                   (ionInput)="onSearch()"
-                   mode="ios">
+<ion-content class="home-content" [fullscreen]="true">
+  <div class="searchbar-shell">
+    <ion-searchbar
+      mode="ios"
+      placeholder="Pesquisar garantias..."
+      [(ngModel)]="searchQuery"
+      (ionInput)="onSearch()">
     </ion-searchbar>
   </div>
 
-  <!-- Cards de estatísticas -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <ion-icon name="shield-checkmark-outline" class="stat-icon"></ion-icon>
-      <span class="stat-number">{{ activeCount | number:'2.0' }}</span>
-      <span class="stat-label">GARANTIAS ATIVAS</span>
+  <section class="summary-grid">
+    <ion-card class="summary-card">
+      <ion-card-content>
+        <span class="summary-value">{{ activeCount | number:'2.0' }}</span>
+        <p class="summary-label">Garantias Ativas</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="summary-card warning">
+      <ion-card-content>
+        <span class="summary-value">{{ expiringSoonCount | number:'2.0' }}</span>
+        <p class="summary-label">Expira em Breve</p>
+      </ion-card-content>
+    </ion-card>
+  </section>
+
+  <section class="warranty-section">
+    <div class="section-heading">
+      <span>AS MINHAS GARANTIAS ({{ warranties.length }})</span>
     </div>
-    <div class="stat-card risk" [class.has-risk]="riskCount > 0">
-      <ion-icon name="warning-outline" class="stat-icon"></ion-icon>
-      <span class="stat-number">{{ riskCount | number:'2.0' }}</span>
-      <span class="stat-label">EXPIRA EM BREVE</span>
-    </div>
-  </div>
 
-  <!-- Lista de garantias -->
-  <div class="section-header">
-    <span class="section-title">AS MINHAS GARANTIAS ({{ filteredWarranties.length }})</span>
-    <span class="ver-tudo" routerLink="/tabs/categories">VER TUDO ›</span>
-  </div>
+    <ion-list lines="none">
+      <ion-item
+        button
+        detail="false"
+        *ngFor="let warranty of filteredWarranties"
+        (click)="goToDetail(warranty.id)">
+        <div class="item-icon" slot="start">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </div>
 
-  <div class="warranties-list">
-    <div class="warranty-item" *ngFor="let w of filteredWarranties"
-         (click)="openWarranty(w.id)">
-      <div class="w-icon">
-        <ion-icon [name]="getCategoryIcon(w.categoryId)"></ion-icon>
-      </div>
-      <div class="w-info">
-        <span class="w-name">{{ w.productName }}</span>
-        <span class="w-meta">Comprado: {{ formatDate(w.purchaseDate) }} · {{ getRemainingLabel(w.expiryDate) }}</span>
-      </div>
-      <span class="status-badge" [ngClass]="getStatus(w.expiryDate)">
-        {{ getStatusLabel(w.expiryDate) }}
-      </span>
-    </div>
-  </div>
+        <ion-label>
+          <h2>{{ getTitle(warranty) }}</h2>
+          <p>Compra: {{ formatDate(warranty.purchaseDate) }}</p>
+          <p>Fim: {{ formatDate(warranty.endDate) }}</p>
+        </ion-label>
 
-  <div class="empty-state" *ngIf="filteredWarranties.length === 0">
-    <ion-icon name="shield-outline"></ion-icon>
-    <p>Nenhuma garantia encontrada</p>
-  </div>
-
+        <ion-badge [color]="getStatusClass(warranty) === 'active' ? 'success' : 'warning'">
+          {{ warranty.status }}
+        </ion-badge>
+      </ion-item>
+    </ion-list>
+  </section>
 </ion-content>

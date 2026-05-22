@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { WarrantyService } from '../../services/warranty.service';
 import { Category, Warranty, getRemainingLabel } from '../../models/models';
+import { WarrantyService } from '../../services/warranty.service';
 
 @Component({
   standalone: false,
@@ -11,19 +11,15 @@ import { Category, Warranty, getRemainingLabel } from '../../models/models';
   styleUrls: ['./warranty-new.page.scss'],
 })
 export class WarrantyNewPage implements OnInit {
-
-  /** Passo atual do wizard (1 = fatura, 2 = dados, 3 = foto local, 4 = info local, 5 = sucesso) */
   currentStep = 1;
 
-  invoicePhoto?: string;   // base64 da fatura
-  storagePhoto?: string;   // base64 do local de arrumação
+  invoicePhoto?: string;
+  storagePhoto?: string;
 
-  storageLabel    = '';
+  storageLabel = '';
   storageLocation = '';
 
   savedWarranty?: Warranty;
-
-  /** Formulário reativo dos dados da garantia (Req. adicional 6) */
   warrantyForm: FormGroup;
   categories: Category[] = [];
 
@@ -35,12 +31,11 @@ export class WarrantyNewPage implements OnInit {
     private warrantyService: WarrantyService,
     private router: Router,
   ) {
-    // Valores pré-preenchidos simulando OCR
     this.warrantyForm = this.fb.group({
-      productName:    ['Smart TV Samsung 55"', Validators.required],
-      purchaseDate:   [new Date().toISOString().split('T')[0], Validators.required],
+      productName: ['Smart TV Samsung 55"', Validators.required],
+      purchaseDate: [new Date().toISOString().split('T')[0], Validators.required],
       warrantyMonths: ['36', Validators.required],
-      categoryId:     ['cat2', Validators.required],
+      categoryId: ['cat2', Validators.required],
     });
   }
 
@@ -48,17 +43,17 @@ export class WarrantyNewPage implements OnInit {
     this.categories = this.warrantyService.getCategories();
   }
 
-  /** Aciona o input de ficheiro para captura da fatura */
-  captureInvoice() { this.invoiceInput.nativeElement.click(); }
+  captureInvoice() {
+    this.invoiceInput.nativeElement.click();
+  }
 
-  /** Processa a imagem da fatura selecionada */
   onInvoiceFile(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         this.invoicePhoto = reader.result as string;
-        this.currentStep  = 2; // avançar para formulário
+        this.currentStep = 2;
       };
       reader.readAsDataURL(file);
     } else {
@@ -66,17 +61,17 @@ export class WarrantyNewPage implements OnInit {
     }
   }
 
-  /** Aciona o input de ficheiro para captura do local de arrumação */
-  captureStorage() { this.storageInput.nativeElement.click(); }
+  captureStorage() {
+    this.storageInput.nativeElement.click();
+  }
 
-  /** Processa a imagem do local de arrumação selecionada */
   onStorageFile(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         this.storagePhoto = reader.result as string;
-        this.currentStep  = 4; // avançar para info do local
+        this.currentStep = 4;
       };
       reader.readAsDataURL(file);
     } else {
@@ -84,38 +79,56 @@ export class WarrantyNewPage implements OnInit {
     }
   }
 
-  nextStep() { if (this.currentStep < 5) this.currentStep++; }
-  prevStep() { if (this.currentStep > 1) this.currentStep--; }
-
-  goBack() { this.router.navigate(['/tabs/home']); }
-
-  /** Guarda a garantia no Ionic Storage */
-  async saveWarranty() {
-    const v = this.warrantyForm.value;
-    const warranty: Warranty = {
-      id:              this.warrantyService.generateId(),
-      productName:     v.productName,
-      purchaseDate:    v.purchaseDate,
-      warrantyMonths:  Number(v.warrantyMonths),
-      expiryDate:      this.warrantyService.calcExpiryDate(v.purchaseDate, Number(v.warrantyMonths)),
-      categoryId:      v.categoryId,
-      invoicePhotoUrl: this.invoicePhoto,
-      storagePhotoUrl: this.storagePhoto,
-      storageLabel:    this.storageLabel   || undefined,
-      storageLocation: this.storageLocation || undefined,
-      createdAt:       new Date().toISOString(),
-    };
-    await this.warrantyService.saveWarranty(warranty);
-    this.savedWarranty = warranty;
-    this.currentStep   = 5;
+  nextStep() {
+    if (this.currentStep < 5) this.currentStep++;
   }
 
-  finish() { this.router.navigate(['/tabs/home'], { replaceUrl: true }); }
+  prevStep() {
+    if (this.currentStep > 1) this.currentStep--;
+  }
 
-  getRemainingLabel(d: string): string { return getRemainingLabel(d); }
+  goBack() {
+    this.router.navigate(['/tabs/home']);
+  }
 
-  formatDate(d: string): string {
-    if (!d) return '';
-    return new Date(d).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  async saveWarranty() {
+    const formValue = this.warrantyForm.value;
+    const expiryDate = this.warrantyService.calcExpiryDate(formValue.purchaseDate, Number(formValue.warrantyMonths));
+    const categoryName = this.warrantyService.getCategory(formValue.categoryId)?.name || 'Sem categoria';
+
+    const warranty: Warranty = {
+      id: this.warrantyService.generateId(),
+      title: formValue.productName,
+      productName: formValue.productName,
+      purchaseDate: formValue.purchaseDate,
+      endDate: expiryDate,
+      status: 'ATIVA',
+      category: categoryName,
+      warrantyMonths: Number(formValue.warrantyMonths),
+      expiryDate,
+      categoryId: formValue.categoryId,
+      invoicePhotoUrl: this.invoicePhoto,
+      storagePhotoUrl: this.storagePhoto,
+      storageLabel: this.storageLabel || undefined,
+      storageLocation: this.storageLocation || undefined,
+      createdAt: new Date().toISOString(),
+    };
+
+    await this.warrantyService.saveWarranty(warranty);
+    this.savedWarranty = warranty;
+    this.currentStep = 5;
+  }
+
+  finish() {
+    this.router.navigate(['/tabs/home'], { replaceUrl: true });
+  }
+
+  getRemainingLabel(date: string): string {
+    return getRemainingLabel(date);
+  }
+
+  formatDate(date: string): string {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 }

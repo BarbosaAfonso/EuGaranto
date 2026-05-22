@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button text="" defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ warranty?.productName }}</ion-title>
+    <ion-title>{{ getWarrantyTitle() }}</ion-title>
     <ion-buttons slot="end">
       <ion-button fill="clear"><ion-icon name="pencil-outline"></ion-icon></ion-button>
     </ion-buttons>
@@ -11,14 +11,11 @@
 </ion-header>
 
 <ion-content class="detail-content" *ngIf="warranty">
-
-  <!-- Status badge -->
   <div class="status-header" [ngClass]="getStatusClass()">
     <ion-icon name="checkmark-circle-outline"></ion-icon>
     <strong>{{ getStatusText() }}</strong>
   </div>
 
-  <!-- Informação do produto -->
   <ion-card class="info-card">
     <ion-card-content>
       <ion-list lines="inset">
@@ -28,7 +25,7 @@
         </ion-item>
         <ion-item>
           <ion-label>Termina em</ion-label>
-          <ion-note slot="end"><strong>{{ formatDate(warranty.expiryDate) }}</strong></ion-note>
+          <ion-note slot="end"><strong>{{ formatDate(getWarrantyEndDate()) }}</strong></ion-note>
         </ion-item>
         <ion-item *ngIf="warranty.value">
           <ion-label>Valor</ion-label>
@@ -40,7 +37,6 @@
         </ion-item>
       </ion-list>
 
-      <!-- Barra de cobertura -->
       <div class="coverage-wrap">
         <div class="coverage-label">
           <span>ESTADO DA COBERTURA</span>
@@ -53,7 +49,6 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Alertas -->
   <div class="section-header">ALERTAS CONFIGURADOS ({{ alerts.length }})</div>
 
   <ion-card class="alert-item-card" *ngFor="let a of alerts">
@@ -62,7 +57,7 @@
         <span class="alert-dot" [class.on]="a.enabled"></span>
         <div class="alert-info">
           <strong>{{ a.daysBefore }} dias antes</strong>
-          <small>{{ a.isNew ? 'NOVO' : 'ALERTA PADRÃO' }} · {{ formatDate(a.triggerDate) }}</small>
+          <small>{{ a.isNew ? 'NOVO' : 'ALERTA PADRAO' }} · {{ formatDate(a.triggerDate) }}</small>
         </div>
         <ion-toggle [(ngModel)]="a.enabled" (ionChange)="toggleAlert(a)" color="success"></ion-toggle>
       </div>
@@ -74,7 +69,6 @@
     + Novo Alerta
   </ion-button>
 
-  <!-- Documentos -->
   <div class="docs-row">
     <ion-card class="doc-card" *ngIf="warranty.invoicePhotoUrl">
       <ion-card-content>
@@ -92,8 +86,7 @@
     </ion-card>
   </div>
 
-  <!-- Local de arrumação -->
-  <div class="section-header" *ngIf="warranty.storageLabel">LOCAL DE ARRUMAÇÃO</div>
+  <div class="section-header" *ngIf="warranty.storageLabel">LOCAL DE ARRUMACAO</div>
 
   <ion-card class="storage-detail-card" *ngIf="warranty.storageLabel || warranty.storagePhotoUrl">
     <ion-card-content>
@@ -105,9 +98,7 @@
         </div>
         <ion-icon name="checkmark-circle" color="success"></ion-icon>
       </div>
-      <img *ngIf="warranty.storagePhotoUrl" [src]="warranty.storagePhotoUrl"
-           class="storage-img" alt="Local de arrumação">
+      <img *ngIf="warranty.storagePhotoUrl" [src]="warranty.storagePhotoUrl" class="storage-img" alt="Local de arrumacao">
     </ion-card-content>
   </ion-card>
-
 </ion-content>
