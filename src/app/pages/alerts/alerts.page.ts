@@ -1,6 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Warranty, getWarrantyTitle } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
-import { Alert } from '../../models/models';
+
+interface WarrantyAlertItem {
+  warranty: Warranty;
+  daysRemaining: number;
+}
 
 @Component({
   standalone: false,
@@ -8,17 +14,81 @@ import { Alert } from '../../models/models';
   templateUrl: './alerts.page.html',
   styleUrls: ['./alerts.page.scss'],
 })
-export class AlertsPage {
+export class AlertsPage implements OnInit, OnDestroy {
+  alertWarranties: WarrantyAlertItem[] = [];
 
-  alerts: Alert[] = [];
+  private sub?: Subscription;
 
   constructor(private warrantyService: WarrantyService) {}
 
-  ionViewWillEnter() { this.alerts = this.warrantyService.getAlerts(); }
+  ngOnInit(): void {
+    this.sub = this.warrantyService.warranties$.subscribe(warranties => {
+      this.alertWarranties = this.getFilteredAndSortedWarranties(warranties);
+    });
+  }
 
-  async toggleAlert(alert: Alert) { await this.warrantyService.toggleAlert(alert.id); }
+  ionViewWillEnter(): void {
+    this.warrantyService.warranties$.next(this.warrantyService.getWarranties());
+  }
 
-  formatDate(d: string): string {
-    return new Date(d).toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' });
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
+
+  getTitle(warranty: Warranty): string {
+    return getWarrantyTitle(warranty);
+  }
+
+  getDaysRemaining(endDate: string): number {
+    const today = new Date();
+    const expiryDate = new Date(endDate);
+
+    today.setHours(0, 0, 0, 0);
+    expiryDate.setHours(0, 0, 0, 0);
+
+    return Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
+  getBadgeColor(daysRemaining: number): 'danger' | 'warning' {
+    return daysRemaining <= 7 ? 'danger' : 'warning';
+  }
+
+  getBadgeText(daysRemaining: number): string {
+    if (daysRemaining < 0) {
+      return `Expirou há ${Math.abs(daysRemaining)} dia(s)`;
+    }
+
+    return `Resta(m) ${daysRemaining} dia(s)`;
+  }
+
+  trackByWarranty(_: number, item: WarrantyAlertItem): string {
+    return item.warranty.id;
+  }
+
+  formatDate(date: string): string {
+    return new Date(date).toLocaleDateString('pt-PT', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  }
+
+  private getFilteredAndSortedWarranties(warranties: Warranty[]): WarrantyAlertItem[] {
+    return warranties
+      .map(warranty => ({
+        warranty,
+        daysRemaining: this.getDaysRemaining(warranty.endDate),
+      }))
+      .filter(item => item.daysRemaining <= 30)
+      .sort((first, second) => {
+        const firstExpired = first.daysRemaining < 0;
+        const secondExpired = second.daysRemaining < 0;
+
+        if (firstExpired && !secondExpired) return -1;
+        if (!firstExpired && secondExpired) return 1;
+        if (firstExpired && secondExpired) return second.daysRemaining - first.daysRemaining;
+
+        return first.daysRemaining - second.daysRemaining;
+      });
   }
 }

@@ -1,31 +1,41 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar><ion-title>Alertas</ion-title></ion-toolbar>
+  <ion-toolbar>
+    <ion-title>Alertas</ion-title>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content class="alerts-content">
-  <div class="section-tag">SEQUÊNCIA DE ALERTAS</div>
+  <ng-container *ngIf="alertWarranties.length > 0; else emptyState">
+    <ion-list class="alerts-list" lines="none">
+      <ion-item
+        *ngFor="let item of alertWarranties; trackBy: trackByWarranty"
+        class="alert-item"
+      >
+        <ion-icon
+          slot="start"
+          name="warning-outline"
+          color="warning"
+          aria-hidden="true"
+        ></ion-icon>
 
-  <ion-card class="alert-card" *ngFor="let a of alerts" [class.new-alert]="a.isNew">
-    <ion-card-content>
-      <div class="alert-top">
-        <span class="new-badge" *ngIf="a.isNew">NOVO</span>
-        <span class="days-badge" [class.urgent]="a.daysBefore <= 7">
-          {{ a.daysBefore }} DIAS ANTES
-        </span>
-      </div>
-      <div class="alert-main">
-        <div class="alert-details">
-          <strong>{{ a.message || 'Alerta padrão' }}</strong>
-          <small>{{ formatDate(a.triggerDate) }} · {{ a.productName }}</small>
-        </div>
-        <ion-toggle [(ngModel)]="a.enabled" (ionChange)="toggleAlert(a)" color="success"></ion-toggle>
-      </div>
-    </ion-card-content>
-  </ion-card>
+        <ion-label>
+          <h2>{{ getTitle(item.warranty) }}</h2>
+          <ion-note>{{ item.warranty.category }}</ion-note>
+          <p>Expira em {{ formatDate(item.warranty.endDate) }}</p>
+        </ion-label>
 
-  <div class="empty-state" *ngIf="alerts.length === 0">
-    <ion-icon name="notifications-off-outline"></ion-icon>
-    <p>Nenhum alerta configurado</p>
-    <small>Adicione alertas a partir do detalhe de uma garantia.</small>
-  </div>
+        <ion-badge slot="end" [color]="getBadgeColor(item.daysRemaining)">
+          {{ getBadgeText(item.daysRemaining) }}
+        </ion-badge>
+      </ion-item>
+    </ion-list>
+  </ng-container>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+      <p>Tudo sob controlo!</p>
+      <small>Nenhuma garantia expira nos próximos 30 dias.</small>
+    </div>
+  </ng-template>
 </ion-content>
