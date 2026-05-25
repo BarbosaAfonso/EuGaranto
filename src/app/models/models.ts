@@ -13,6 +13,7 @@ export interface Warranty {
   value?: number;
   storagePhotoUrl?: string;
   invoicePhotoUrl?: string;
+  capturedImage?: string;
   storageLabel?: string;
   storageLocation?: string;
   createdAt?: string;

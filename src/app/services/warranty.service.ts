@@ -59,6 +59,10 @@ export class WarrantyService {
     return this.warranties.find(warranty => warranty.id === id);
   }
 
+  getWarrantyById(id: string): Warranty | undefined {
+    return this.getWarranty(id);
+  }
+
   async saveWarranty(warranty: Warranty): Promise<void> {
     const normalized = this.normalizeWarranty(warranty);
     const index = this.warranties.findIndex(item => item.id === normalized.id);
@@ -203,6 +207,8 @@ export class WarrantyService {
       status,
       category,
       categoryId,
+      capturedImage: warranty.capturedImage || warranty.invoicePhotoUrl,
+      invoicePhotoUrl: warranty.invoicePhotoUrl || warranty.capturedImage,
       warrantyMonths: warranty.warrantyMonths ?? this.getWarrantyMonths(purchaseDate, endDate),
       createdAt: warranty.createdAt || new Date().toISOString(),
     };

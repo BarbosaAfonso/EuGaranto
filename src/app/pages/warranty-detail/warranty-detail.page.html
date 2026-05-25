@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button text="" defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>{{ getWarrantyTitle() }}</ion-title>
+    <ion-title>{{ warranty?.productName || warranty?.title }}</ion-title>
     <ion-buttons slot="end">
       <ion-button fill="clear"><ion-icon name="pencil-outline"></ion-icon></ion-button>
     </ion-buttons>
@@ -20,12 +20,16 @@
     <ion-card-content>
       <ion-list lines="inset">
         <ion-item>
+          <ion-label>Produto</ion-label>
+          <ion-note slot="end"><strong>{{ warranty.productName || warranty.title }}</strong></ion-note>
+        </ion-item>
+        <ion-item>
           <ion-label>Comprado em</ion-label>
-          <ion-note slot="end"><strong>{{ formatDate(warranty.purchaseDate) }}</strong></ion-note>
+          <ion-note slot="end"><strong>{{ warranty.purchaseDate | date:'dd/MM/yyyy' }}</strong></ion-note>
         </ion-item>
         <ion-item>
           <ion-label>Termina em</ion-label>
-          <ion-note slot="end"><strong>{{ formatDate(getWarrantyEndDate()) }}</strong></ion-note>
+          <ion-note slot="end"><strong>{{ getWarrantyEndDate() | date:'dd/MM/yyyy' }}</strong></ion-note>
         </ion-item>
         <ion-item *ngIf="warranty.value">
           <ion-label>Valor</ion-label>
@@ -33,7 +37,7 @@
         </ion-item>
         <ion-item lines="none">
           <ion-label>Categoria</ion-label>
-          <ion-note slot="end"><strong>{{ getCategoryName() }}</strong></ion-note>
+          <ion-note slot="end"><strong>{{ warranty.category }}</strong></ion-note>
         </ion-item>
       </ion-list>
 
@@ -49,6 +53,17 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-button
+    expand="block"
+    fill="outline"
+    color="dark"
+    class="btn-view-invoice"
+    (click)="verFatura()"
+    *ngIf="warranty.capturedImage">
+    <ion-icon name="document-text-outline" slot="start"></ion-icon>
+    Visualizar Talão/Fatura
+  </ion-button>
+
   <div class="section-header">ALERTAS CONFIGURADOS ({{ alerts.length }})</div>
 
   <ion-card class="alert-item-card" *ngFor="let a of alerts">
@@ -57,7 +72,7 @@
         <span class="alert-dot" [class.on]="a.enabled"></span>
         <div class="alert-info">
           <strong>{{ a.daysBefore }} dias antes</strong>
-          <small>{{ a.isNew ? 'NOVO' : 'ALERTA PADRAO' }} · {{ formatDate(a.triggerDate) }}</small>
+          <small>{{ a.isNew ? 'NOVO' : 'ALERTA PADRÃO' }} · {{ formatDate(a.triggerDate) }}</small>
         </div>
         <ion-toggle [(ngModel)]="a.enabled" (ionChange)="toggleAlert(a)" color="success"></ion-toggle>
       </div>
@@ -70,7 +85,7 @@
   </ion-button>
 
   <div class="docs-row">
-    <ion-card class="doc-card" *ngIf="warranty.invoicePhotoUrl">
+    <ion-card class="doc-card" *ngIf="warranty.invoicePhotoUrl || warranty.capturedImage">
       <ion-card-content>
         <ion-icon name="receipt-outline"></ion-icon>
         <strong>Fatura</strong>
@@ -80,13 +95,13 @@
     <ion-card class="doc-card">
       <ion-card-content>
         <ion-icon name="headset-outline"></ion-icon>
-        <strong>Suporte {{ warranty.brand }}</strong>
+        <strong>Suporte {{ warranty.brand || 'da marca' }}</strong>
         <small>Contactar</small>
       </ion-card-content>
     </ion-card>
   </div>
 
-  <div class="section-header" *ngIf="warranty.storageLabel">LOCAL DE ARRUMACAO</div>
+  <div class="section-header" *ngIf="warranty.storageLabel">LOCAL DE ARRUMAÇÃO</div>
 
   <ion-card class="storage-detail-card" *ngIf="warranty.storageLabel || warranty.storagePhotoUrl">
     <ion-card-content>
@@ -98,7 +113,7 @@
         </div>
         <ion-icon name="checkmark-circle" color="success"></ion-icon>
       </div>
-      <img *ngIf="warranty.storagePhotoUrl" [src]="warranty.storagePhotoUrl" class="storage-img" alt="Local de arrumacao">
+      <img *ngIf="warranty.storagePhotoUrl" [src]="warranty.storagePhotoUrl" class="storage-img" alt="Local de arrumação">
     </ion-card-content>
   </ion-card>
 </ion-content>
