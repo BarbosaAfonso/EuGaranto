@@ -17,12 +17,11 @@ export class AlertNewPage implements OnInit {
   productName = '';
   warranty?: Warranty;
 
-  dayOptions = [7, 14, 30, 60, 90];
-  selectedDays = 60;
-
-  alertMessage = '';
-  notifyPush = true;
-  notifyEmail = false;
+  quickDayOptions = [7, 30, 60];
+  daysBefore = 30;
+  customMessage = '';
+  pushEnabled = true;
+  emailEnabled = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -38,15 +37,33 @@ export class AlertNewPage implements OnInit {
   }
 
   selectDays(days: number) {
-    this.selectedDays = days;
+    this.daysBefore = days;
   }
 
   getTriggerDate(): string {
     if (!this.warranty) return '';
 
     const expiry = new Date(getWarrantyDate(this.warranty));
-    expiry.setDate(expiry.getDate() - this.selectedDays);
+    expiry.setDate(expiry.getDate() - this.daysBefore);
     return expiry.toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  getMessagePreview(): string {
+    return this.customMessage.trim() || `Lembrar garantia de ${this.productName}`;
+  }
+
+  getSummaryChannels(): string {
+    const channels: string[] = [];
+
+    if (this.pushEnabled) {
+      channels.push('Push');
+    }
+
+    if (this.emailEnabled) {
+      channels.push('Email');
+    }
+
+    return channels.length ? channels.join(' e ') : 'Sem canais ativos';
   }
 
   nextStep() {
@@ -57,20 +74,33 @@ export class AlertNewPage implements OnInit {
     if (this.currentStep > 1) this.currentStep--;
   }
 
+  async cancelOrBack(): Promise<void> {
+    if (this.currentStep > 1) {
+      this.prevStep();
+      return;
+    }
+
+    await this.router.navigate(['/warranty-detail', this.warrantyId]);
+  }
+
   async saveAlert() {
-    const expiry = new Date(getWarrantyDate(this.warranty!));
+    if (!this.warranty) {
+      return;
+    }
+
+    const expiry = new Date(getWarrantyDate(this.warranty));
     const triggerDate = new Date(expiry);
-    triggerDate.setDate(triggerDate.getDate() - this.selectedDays);
+    triggerDate.setDate(triggerDate.getDate() - this.daysBefore);
 
     const alert: Alert = {
       id: this.warrantyService.generateId(),
       warrantyId: this.warrantyId,
       productName: this.productName,
-      daysBefore: this.selectedDays,
+      daysBefore: this.daysBefore,
       triggerDate: triggerDate.toISOString().split('T')[0],
-      message: this.alertMessage || 'Alerta de garantia',
-      notifyPush: this.notifyPush,
-      notifyEmail: this.notifyEmail,
+      message: this.getMessagePreview(),
+      notifyPush: this.pushEnabled,
+      notifyEmail: this.emailEnabled,
       enabled: true,
       isNew: true,
     };
@@ -85,6 +115,6 @@ export class AlertNewPage implements OnInit {
     });
 
     await toast.present();
-    this.router.navigate(['/warranty-detail', this.warrantyId]);
+    await this.router.navigate(['/warranty-detail', this.warrantyId]);
   }
 }
