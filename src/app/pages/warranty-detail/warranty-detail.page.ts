@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Alert, Warranty, getRemainingLabel, getWarrantyDate, getWarrantyStatus, getWarrantyTitle } from '../../models/models';
+import { AlertController } from '@ionic/angular';
+import { Alert, Warranty, getRemainingLabel, getWarrantyDate, getWarrantyStatus } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
 
 @Component({
@@ -18,22 +19,15 @@ export class WarrantyDetailPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private warrantyService: WarrantyService,
+    private alertController: AlertController,
   ) {}
 
-  ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id) return;
-
-    this.warranty = this.warrantyService.getWarranty(id);
-    this.alerts = this.warrantyService.getAlertsForWarranty(id);
-    this.coveragePercent = this.warranty
-      ? this.warrantyService.getCoveragePercent(this.warranty.purchaseDate, getWarrantyDate(this.warranty))
-      : 0;
+  ngOnInit(): void {
+    this.loadWarrantyDetails();
   }
 
-  ionViewWillEnter() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) this.alerts = this.warrantyService.getAlertsForWarranty(id);
+  ionViewWillEnter(): void {
+    this.loadWarrantyDetails();
   }
 
   getStatusClass(): string {
@@ -41,34 +35,59 @@ export class WarrantyDetailPage implements OnInit {
   }
 
   getStatusText(): string {
-    return this.warranty
-      ? `GARANTIA ${this.getStatusClass() === 'active' ? 'ATIVA' : 'EM RISCO'} · ${getRemainingLabel(this.warranty)}`
-      : '';
-  }
+    if (!this.warranty) {
+      return '';
+    }
 
-  getCategoryName(): string {
-    if (!this.warranty) return '';
-    return this.warranty.category || this.warrantyService.getCategory(this.warranty.categoryId || '')?.name || '';
-  }
-
-  getWarrantyTitle(): string {
-    return this.warranty ? getWarrantyTitle(this.warranty) : '';
+    const statusLabel = this.getStatusClass() === 'active' ? 'ATIVA' : this.getStatusClass() === 'risk' ? 'EM RISCO' : 'EXPIRADA';
+    return `GARANTIA ${statusLabel} · ${getRemainingLabel(this.warranty)}`;
   }
 
   getWarrantyEndDate(): string {
     return this.warranty ? getWarrantyDate(this.warranty) : '';
   }
 
-  async toggleAlert(alert: Alert) {
+  async toggleAlert(alert: Alert): Promise<void> {
     await this.warrantyService.toggleAlert(alert.id);
   }
 
-  addAlert() {
+  addAlert(): void {
     this.router.navigate(['/alert-new', this.warranty?.id]);
+  }
+
+  async verFatura(): Promise<void> {
+    if (!this.warranty?.capturedImage) {
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Talão/Fatura',
+      message: `<img src="${this.warranty.capturedImage}" alt="Talão ou fatura" style="width:100%;border-radius:12px;object-fit:cover;" />`,
+      buttons: ['Fechar'],
+      cssClass: 'invoice-preview-alert',
+    });
+
+    await alert.present();
   }
 
   formatDate(date: string): string {
     if (!date) return '';
     return new Date(date).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  private loadWarrantyDetails(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.warranty = undefined;
+      this.alerts = [];
+      this.coveragePercent = 0;
+      return;
+    }
+
+    this.warranty = this.warrantyService.getWarrantyById(id);
+    this.alerts = this.warrantyService.getAlertsForWarranty(id);
+    this.coveragePercent = this.warranty
+      ? this.warrantyService.getCoveragePercent(this.warranty.purchaseDate, getWarrantyDate(this.warranty))
+      : 0;
   }
 }

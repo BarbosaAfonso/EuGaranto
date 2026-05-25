@@ -82,6 +82,8 @@ export class WarrantyNewPage implements OnInit {
       warrantyMonths,
       expiryDate,
       categoryId: selectedCategory?.id,
+      capturedImage: this.capturedImage,
+      invoicePhotoUrl: this.capturedImage,
       createdAt: new Date().toISOString(),
     };
 
