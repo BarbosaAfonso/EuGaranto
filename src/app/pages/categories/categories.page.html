@@ -1,55 +1,47 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-title>Categorias</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="newCategory()">
-        <ion-icon name="add-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="cat-content">
-
-  <!-- CORREÇÃO HEURÍSTICA #6: feedback só após ação, com nome correto -->
-  <div class="success-banner animated" *ngIf="showBanner">
-    <ion-icon name="checkmark-circle-outline"></ion-icon>
-    {{ bannerMsg }}
-    <ion-button fill="clear" size="small" (click)="showBanner = false">
-      <ion-icon name="close-outline"></ion-icon>
-    </ion-button>
-  </div>
-
-  <div class="inventory-tag">INVENTÁRIO</div>
-  <h1 class="page-title">Gerir Categorias</h1>
-
-  <ion-list lines="none" class="cat-list">
-    <ion-item *ngFor="let cat of categories" class="cat-item"
-              (click)="openCategory(cat)" detail="true">
-      <div class="cat-icon" [style.background]="cat.color + '22'" slot="start">
-        <ion-icon [name]="cat.icon" [style.color]="cat.color"></ion-icon>
-      </div>
-      <ion-label>
-        <h3>{{ cat.name }}</h3>
-        <p>{{ getItemCount(cat.id) }} itens registados</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
-
-  <ion-button expand="block" fill="outline" class="btn-new-cat" (click)="newCategory()">
-    <ion-icon name="add-outline" slot="start"></ion-icon>
-    + Nova Categoria
+<ion-content class="categories-content">
+  <ion-button
+    *ngIf="selectedIds.length > 0"
+    expand="block"
+    color="primary"
+    class="ion-margin move-button"
+    (click)="moveSelectedItems()"
+  >
+    Mover {{ selectedIds.length }} itens
   </ion-button>
 
-  <div class="stats-row">
-    <div class="stat-box">
-      <span class="stat-lbl">TOTAL DE CATEGORIAS</span>
-      <span class="stat-val">{{ categories.length | number:'2.0' }}</span>
-    </div>
-    <div class="stat-box primary">
-      <span class="stat-lbl">GARANTIAS ATIVAS</span>
-      <span class="stat-val">{{ totalWarranties }}</span>
-    </div>
-  </div>
+  <ion-list class="categories-list" lines="none">
+    
+    <ng-container *ngFor="let group of groupedWarranties; trackBy: trackByCategory">
+      
+      <div
+        class="category-group"
+        *ngIf="group.items.length > 0"
+      >
+        <ion-item-divider sticky class="category-header">
+          <ion-label>{{ group.category }}</ion-label>
+        </ion-item-divider>
 
+        <ion-item *ngFor="let warranty of group.items; trackBy: trackByWarranty" class="warranty-item">
+          <ion-checkbox
+            slot="start"
+            [checked]="isSelected(warranty.id)"
+            (ionChange)="toggleSelection(warranty.id)"
+          ></ion-checkbox>
+
+          <ion-label>
+            <h2>{{ getTitle(warranty) }}</h2>
+            <p>Fim da garantia: {{ warranty.endDate | date:'dd/MM/yyyy' }}</p>
+          </ion-label>
+        </ion-item>
+      </div>
+
+    </ng-container>
+
+  </ion-list>
 </ion-content>
