@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { Storage } from '@ionic/storage-angular';
 import { Alert, Category, Warranty, getWarrantyStatus } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
 export class WarrantyService {
+  private readonly warrantiesStorageKey = 'warranties';
   private warranties: Warranty[] = [];
   private categories: Category[] = [];
   private alerts: Alert[] = [];
@@ -14,17 +16,30 @@ export class WarrantyService {
   categories$ = new BehaviorSubject<Category[]>([]);
   alerts$ = new BehaviorSubject<Alert[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private storage: Storage,
+  ) {}
 
   async init(): Promise<void> {
     if (this.initialized) return;
 
-    const warranties = await firstValueFrom(
-      this.http.get<Warranty[]>('assets/data/warranties.json')
-    );
+    await this.storage.create();
+
+    const storedWarranties = await this.storage.get(this.warrantiesStorageKey);
     const seed = await firstValueFrom(
       this.http.get<{ categories: Category[]; alerts: Alert[] }>('assets/data/seed.json')
     );
+
+    let warranties: Warranty[] = [];
+    if (Array.isArray(storedWarranties)) {
+      warranties = storedWarranties;
+    } else {
+      warranties = await firstValueFrom(
+        this.http.get<Warranty[]>('assets/data/warranties.json')
+      );
+      await this.storage.set(this.warrantiesStorageKey, warranties);
+    }
 
     this.categories = seed.categories || [];
     this.alerts = seed.alerts || [];
@@ -54,11 +69,20 @@ export class WarrantyService {
       this.warranties.push(normalized);
     }
 
+    await this.persistWarranties();
+    this.warranties$.next([...this.warranties]);
+  }
+
+  async addWarranty(warranty: Warranty): Promise<void> {
+    const normalized = this.normalizeWarranty(warranty);
+    this.warranties = [...this.warranties, normalized];
+    await this.persistWarranties();
     this.warranties$.next([...this.warranties]);
   }
 
   async deleteWarranty(id: string): Promise<void> {
     this.warranties = this.warranties.filter(warranty => warranty.id !== id);
+    await this.persistWarranties();
     this.warranties$.next([...this.warranties]);
   }
 
@@ -108,6 +132,7 @@ export class WarrantyService {
 
     warranty.categoryId = categoryId;
     warranty.category = this.getCategory(categoryId)?.name || warranty.category;
+    await this.persistWarranties();
     this.warranties$.next([...this.warranties]);
   }
 
@@ -202,5 +227,9 @@ export class WarrantyService {
     const start = new Date(purchaseDate);
     const end = new Date(endDate);
     return Math.max(1, (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth()));
+  }
+
+  private async persistWarranties(): Promise<void> {
+    await this.storage.set(this.warrantiesStorageKey, this.warranties);
   }
 }

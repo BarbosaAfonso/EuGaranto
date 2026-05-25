@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Category, Warranty, getRemainingLabel } from '../../models/models';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Category, Warranty } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
 
 @Component({
@@ -11,124 +12,85 @@ import { WarrantyService } from '../../services/warranty.service';
   styleUrls: ['./warranty-new.page.scss'],
 })
 export class WarrantyNewPage implements OnInit {
-  currentStep = 1;
-
-  invoicePhoto?: string;
-  storagePhoto?: string;
-
-  storageLabel = '';
-  storageLocation = '';
-
-  savedWarranty?: Warranty;
-  warrantyForm: FormGroup;
+  isPhotoTaken = false;
+  capturedImage: string | undefined;
+  warrantyForm!: FormGroup;
   categories: Category[] = [];
-
-  @ViewChild('invoiceInput') invoiceInput!: ElementRef<HTMLInputElement>;
-  @ViewChild('storageInput') storageInput!: ElementRef<HTMLInputElement>;
 
   constructor(
     private fb: FormBuilder,
-    private warrantyService: WarrantyService,
     private router: Router,
-  ) {
+    private warrantyService: WarrantyService,
+  ) {}
+
+  ngOnInit(): void {
+    this.categories = this.warrantyService.getCategories();
     this.warrantyForm = this.fb.group({
-      productName: ['Smart TV Samsung 55"', Validators.required],
-      purchaseDate: [new Date().toISOString().split('T')[0], Validators.required],
-      warrantyMonths: ['36', Validators.required],
-      categoryId: ['cat2', Validators.required],
+      productName: ['', Validators.required],
+      purchaseDate: ['', Validators.required],
+      duration: ['', Validators.required],
+      category: ['', Validators.required],
     });
   }
 
-  ngOnInit() {
-    this.categories = this.warrantyService.getCategories();
-  }
+  async takePhoto(): Promise<void> {
+    const result = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Prompt,
+    });
 
-  captureInvoice() {
-    this.invoiceInput.nativeElement.click();
-  }
-
-  onInvoiceFile(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.invoicePhoto = reader.result as string;
-        this.currentStep = 2;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      this.currentStep = 2;
+    if (!result.dataUrl) {
+      return;
     }
+
+    const simulatedCategory =
+      this.categories.find(category => category.name.toLowerCase().includes('sala'))?.name ??
+      this.categories[0]?.name ??
+      'Sala';
+
+    this.capturedImage = result.dataUrl;
+    this.isPhotoTaken = true;
+    this.warrantyForm.patchValue({
+      productName: 'Smart TV Samsung',
+      purchaseDate: new Date().toISOString().split('T')[0],
+      duration: '3 anos',
+      category: simulatedCategory,
+    });
   }
 
-  captureStorage() {
-    this.storageInput.nativeElement.click();
-  }
-
-  onStorageFile(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.storagePhoto = reader.result as string;
-        this.currentStep = 4;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      this.currentStep = 4;
+  async onSubmit(): Promise<void> {
+    if (this.warrantyForm.invalid) {
+      this.warrantyForm.markAllAsTouched();
+      return;
     }
-  }
 
-  nextStep() {
-    if (this.currentStep < 5) this.currentStep++;
-  }
-
-  prevStep() {
-    if (this.currentStep > 1) this.currentStep--;
-  }
-
-  goBack() {
-    this.router.navigate(['/tabs/home']);
-  }
-
-  async saveWarranty() {
-    const formValue = this.warrantyForm.value;
-    const expiryDate = this.warrantyService.calcExpiryDate(formValue.purchaseDate, Number(formValue.warrantyMonths));
-    const categoryName = this.warrantyService.getCategory(formValue.categoryId)?.name || 'Sem categoria';
+    const formValue = this.warrantyForm.getRawValue();
+    const warrantyMonths = this.parseDurationToMonths(formValue.duration);
+    const expiryDate = this.warrantyService.calcExpiryDate(formValue.purchaseDate, warrantyMonths);
+    const selectedCategory = this.categories.find(category => category.name === formValue.category);
 
     const warranty: Warranty = {
-      id: this.warrantyService.generateId(),
+      id: `war-${Date.now()}`,
       title: formValue.productName,
       productName: formValue.productName,
       purchaseDate: formValue.purchaseDate,
       endDate: expiryDate,
       status: 'ATIVA',
-      category: categoryName,
-      warrantyMonths: Number(formValue.warrantyMonths),
+      category: formValue.category,
+      warrantyMonths,
       expiryDate,
-      categoryId: formValue.categoryId,
-      invoicePhotoUrl: this.invoicePhoto,
-      storagePhotoUrl: this.storagePhoto,
-      storageLabel: this.storageLabel || undefined,
-      storageLocation: this.storageLocation || undefined,
+      categoryId: selectedCategory?.id,
       createdAt: new Date().toISOString(),
     };
 
-    await this.warrantyService.saveWarranty(warranty);
-    this.savedWarranty = warranty;
-    this.currentStep = 5;
+    await this.warrantyService.addWarranty(warranty);
+    await this.router.navigate(['/tabs/home']);
   }
 
-  finish() {
-    this.router.navigate(['/tabs/home'], { replaceUrl: true });
-  }
-
-  getRemainingLabel(date: string): string {
-    return getRemainingLabel(date);
-  }
-
-  formatDate(date: string): string {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  private parseDurationToMonths(duration: string): number {
+    const parsedYears = Number.parseInt(duration, 10);
+    return Number.isNaN(parsedYears) ? 36 : parsedYears * 12;
   }
 }
