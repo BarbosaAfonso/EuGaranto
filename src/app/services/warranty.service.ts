@@ -7,6 +7,7 @@ import { Alert, Category, Warranty, getWarrantyStatus } from '../models/models';
 @Injectable({ providedIn: 'root' })
 export class WarrantyService {
   private readonly warrantiesStorageKey = 'warranties';
+  private readonly alertsStorageKey = 'alerts';
   private warranties: Warranty[] = [];
   private categories: Category[] = [];
   private alerts: Alert[] = [];
@@ -27,6 +28,7 @@ export class WarrantyService {
     await this.storage.create();
 
     const storedWarranties = await this.storage.get(this.warrantiesStorageKey);
+    const storedAlerts = await this.storage.get(this.alertsStorageKey);
     const seed = await firstValueFrom(
       this.http.get<{ categories: Category[]; alerts: Alert[] }>('assets/data/seed.json')
     );
@@ -42,8 +44,12 @@ export class WarrantyService {
     }
 
     this.categories = seed.categories || [];
-    this.alerts = seed.alerts || [];
+    this.alerts = Array.isArray(storedAlerts) ? storedAlerts : (seed.alerts || []);
     this.warranties = warranties.map(warranty => this.normalizeWarranty(warranty));
+
+    if (!Array.isArray(storedAlerts)) {
+      await this.persistAlerts();
+    }
 
     this.warranties$.next([...this.warranties]);
     this.categories$.next([...this.categories]);
@@ -186,11 +192,13 @@ export class WarrantyService {
       this.alerts.push(alert);
     }
 
+    await this.persistAlerts();
     this.alerts$.next([...this.alerts]);
   }
 
   async deleteAlert(id: string): Promise<void> {
     this.alerts = this.alerts.filter(alert => alert.id !== id);
+    await this.persistAlerts();
     this.alerts$.next([...this.alerts]);
   }
 
@@ -199,6 +207,7 @@ export class WarrantyService {
     if (!alert) return;
 
     alert.enabled = !alert.enabled;
+    await this.persistAlerts();
     this.alerts$.next([...this.alerts]);
   }
 
@@ -267,5 +276,9 @@ export class WarrantyService {
 
   private async persistWarranties(): Promise<void> {
     await this.storage.set(this.warrantiesStorageKey, this.warranties);
+  }
+
+  private async persistAlerts(): Promise<void> {
+    await this.storage.set(this.alertsStorageKey, this.alerts);
   }
 }
