@@ -140,6 +140,36 @@ export class WarrantyService {
     this.warranties$.next([...this.warranties]);
   }
 
+  async updateWarrantiesCategory(ids: string[], newCategory: string): Promise<void> {
+    if (!ids.length) {
+      return;
+    }
+
+    const selectedIds = new Set(ids);
+    const categoryId = this.findCategoryIdByName(newCategory) || undefined;
+    let hasChanges = false;
+
+    this.warranties = this.warranties.map(warranty => {
+      if (!selectedIds.has(warranty.id)) {
+        return warranty;
+      }
+
+      hasChanges = true;
+      return {
+        ...warranty,
+        category: newCategory,
+        categoryId,
+      };
+    });
+
+    if (!hasChanges) {
+      return;
+    }
+
+    await this.persistWarranties();
+    this.warranties$.next([...this.warranties]);
+  }
+
   getAlerts(): Alert[] {
     return [...this.alerts];
   }

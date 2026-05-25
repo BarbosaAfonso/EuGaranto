@@ -1,52 +1,62 @@
-.cat-content { --background: var(--color-bg); }
-
-.success-banner {
-  display: flex; align-items: center; gap: 10px;
-  background: var(--color-primary); color: #fff;
-  padding: 14px 16px; margin: 12px 16px;
-  border-radius: 12px; font-size: 14px; font-weight: 600;
-  ion-icon:first-child { font-size: 20px; }
-  ion-button { margin-left: auto; --color: #fff; }
-  &.animated { animation: slideDown .3s ease; }
+.categories-content,
+ion-content {
+  --background: #f8f9fa;
 }
 
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-12px); }
-  to   { opacity: 1; transform: translateY(0); }
+.move-button {
+  --border-radius: 14px;
+  font-weight: 700;
 }
 
-.inventory-tag {
-  font-size: 11px; font-weight: 700; letter-spacing: .6px;
-  color: var(--color-primary); padding: 20px 20px 4px;
-}
-.page-title { font-size: 28px; font-weight: 800; padding: 0 20px 16px; margin: 0; }
-
-.cat-list { padding: 0 16px; }
-
-.cat-item {
-  --background: var(--color-surface); --border-radius: 14px;
-  margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.05);
-
-  .cat-icon {
-    width: 48px; height: 48px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    ion-icon { font-size: 24px; }
-  }
+ion-list,
+.categories-list {
+  background: transparent;
+  padding: 16px;
 }
 
-.btn-new-cat {
-  --border-radius: 14px; --border-color: var(--color-border);
-  --color: var(--color-text-secondary); margin: 8px 16px;
-  height: 52px; font-weight: 700;
+.category-group {
+  margin-bottom: 4px;
 }
 
-.stats-row {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px;
-  .stat-box {
-    border-radius: 16px; padding: 20px; background: var(--color-surface);
-    .stat-lbl { font-size: 10px; font-weight: 700; letter-spacing: .5px;
-      color: var(--color-text-secondary); display: block; margin-bottom: 8px; }
-    .stat-val { font-size: 36px; font-weight: 800; color: var(--color-text-primary); }
-    &.primary { background: var(--color-primary); .stat-lbl, .stat-val { color: #fff; } }
-  }
+.category-header {
+  --background: transparent;
+  --color: #0a7a3e;
+  --inner-padding-start: 0;
+  --padding-start: 0;
+  min-height: auto;
+  font-size: 18px;
+  font-weight: 800;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.warranty-item {
+  --background: #ffffff;
+  --border-radius: 12px;
+  --color: #1a1a1a;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  --min-height: 66px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.warranty-item ion-label h2 {
+  margin-bottom: 4px;
+  color: #1a1a1a;
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.warranty-item ion-label p,
+.empty-state ion-label {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+ion-checkbox {
+  --size: 22px;
+  --checkbox-background-checked: #0a7a3e;
+  --border-color-checked: #0a7a3e;
+  margin-inline-end: 14px;
 }

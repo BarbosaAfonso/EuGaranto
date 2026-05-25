@@ -1,7 +1,13 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AlertController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { Warranty, getWarrantyTitle } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
-import { Category } from '../../models/models';
+
+interface WarrantyGroup {
+  category: string;
+  items: Warranty[];
+}
 
 @Component({
   standalone: false,
@@ -9,43 +15,108 @@ import { Category } from '../../models/models';
   templateUrl: './categories.page.html',
   styleUrls: ['./categories.page.scss'],
 })
-export class CategoriesPage {
+export class CategoriesPage implements OnInit, OnDestroy {
+  availableCategories = ['Sala de Estar', 'Cozinha', 'Quarto', 'Escritório', 'Outros'];
+  groupedWarranties: WarrantyGroup[] = [];
+  selectedIds: string[] = [];
 
-  categories: Category[] = [];
-  totalWarranties = 0;
-
-  /** CORREÇÃO HEURÍSTICA #6: banner só aparece APÓS a ação */
-  showBanner  = false;
-  bannerMsg   = '';
+  private sub?: Subscription;
 
   constructor(
     private warrantyService: WarrantyService,
-    private router: Router,
+    private alertController: AlertController,
   ) {}
 
-  ionViewWillEnter() {
-    this.categories     = this.warrantyService.getCategories();
-    this.totalWarranties = this.warrantyService.getWarranties().length;
-
-    // Feedback de ação recente (ex: categoria criada)
-    const state = history.state;
-    if (state?.successMsg) {
-      this.bannerMsg  = state.successMsg;
-      this.showBanner = true;
-      setTimeout(() => this.showBanner = false, 3000);
-    }
-  }
-
-  getItemCount(catId: string): number {
-    return this.warrantyService.getCategoryItemCount(catId);
-  }
-
-  openCategory(cat: Category) {
-    /** Req. 5 — passar categoria como estado de navegação */
-    this.router.navigate(['/tabs/categories'], {
-      state: { selectedCat: cat }
+  ngOnInit(): void {
+    this.sub = this.warrantyService.warranties$.subscribe(warranties => {
+      this.groupWarrantiesByCategory(warranties);
+      this.selectedIds = this.selectedIds.filter(id => warranties.some(warranty => warranty.id === id));
     });
   }
 
-  newCategory() { this.router.navigate(['/category-new']); }
+  ionViewWillEnter(): void {
+    this.warrantyService.warranties$.next(this.warrantyService.getWarranties());
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
+
+  getTitle(warranty: Warranty): string {
+    return getWarrantyTitle(warranty);
+  }
+
+  isSelected(id: string): boolean {
+    return this.selectedIds.includes(id);
+  }
+
+  toggleSelection(id: string): void {
+    this.selectedIds = this.isSelected(id)
+      ? this.selectedIds.filter(selectedId => selectedId !== id)
+      : [...this.selectedIds, id];
+  }
+
+  async moveSelectedItems(): Promise<void> {
+    if (!this.selectedIds.length) {
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Mover garantias',
+      message: 'Escolha a categoria de destino para os itens selecionados.',
+      inputs: this.availableCategories.map(category => ({
+        type: 'radio',
+        label: category,
+        value: category,
+      })),
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Mover',
+          handler: (category: string) => {
+            if (!category) {
+              return false;
+            }
+
+            void this.applyCategoryMove(category);
+            return true;
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  trackByCategory(_: number, group: WarrantyGroup): string {
+    return group.category;
+  }
+
+  trackByWarranty(_: number, warranty: Warranty): string {
+    return warranty.id;
+  }
+
+  private async applyCategoryMove(category: string): Promise<void> {
+    await this.warrantyService.updateWarrantiesCategory(this.selectedIds, category);
+    this.selectedIds = [];
+  }
+
+  private groupWarrantiesByCategory(warranties: Warranty[]): void {
+    const serviceCategories = this.warrantyService.getCategories().map(category => category.name);
+    const warrantyCategories = warranties.map(warranty => this.normalizeCategory(warranty.category));
+    const categories = [...new Set([...this.availableCategories, ...serviceCategories, ...warrantyCategories])];
+
+    this.availableCategories = categories;
+    this.groupedWarranties = categories.map(category => ({
+      category,
+      items: warranties.filter(warranty => this.normalizeCategory(warranty.category) === category),
+    }));
+  }
+
+  private normalizeCategory(category?: string): string {
+    return category?.trim() || 'Outros';
+  }
 }
