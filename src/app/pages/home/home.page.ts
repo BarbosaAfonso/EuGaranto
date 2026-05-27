@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Warranty, getWarrantyStatus, getWarrantyTitle } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
+import { AuthService } from '../../services/auth.service'; // ✅
 
 @Component({
   standalone: false,
@@ -16,12 +17,14 @@ export class HomePage implements OnInit, OnDestroy {
   searchQuery = '';
   activeCount = 0;
   expiringSoonCount = 0;
+  userName = ''; // ✅
 
   private sub?: Subscription;
 
   constructor(
     private warrantyService: WarrantyService,
     private router: Router,
+    private authService: AuthService // ✅
   ) {}
 
   ngOnInit() {
@@ -35,6 +38,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.warrantyService.warranties$.next(this.warrantyService.getWarranties());
+    this.userName = this.authService.getCurrentUser()?.nome ?? ''; // ✅
   }
 
   ngOnDestroy() {
