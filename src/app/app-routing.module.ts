@@ -26,7 +26,15 @@ const routes: Routes = [
   {
     path: 'alert-new/:warrantyId', // Req. 5 — parâmetros entre páginas
     loadChildren: () => import('./pages/alert-new/alert-new.module').then(m => m.AlertNewPageModule)
+  },  {
+    path: 'register',
+    loadChildren: () => import('./pages/register/register.module').then( m => m.RegisterPageModule)
   },
+  {
+    path: 'forgot-password',
+    loadChildren: () => import('./pages/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
+  },
+
 ];
 
 @NgModule({

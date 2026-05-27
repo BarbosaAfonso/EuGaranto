@@ -45,7 +45,12 @@
         </div>
 
         <div class="forgot-row">
-          <span class="forgot-link">Esqueceste a palavra-passe?</span>
+          <span class="forgot-link" (click)="openForgotPassword()">Esqueceste a palavra-passe?</span>
+        </div>
+
+        <div class="error-message" *ngIf="loginError">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          {{ loginError }}
         </div>
 
         <ion-button expand="block" class="btn-login" type="submit" color="success"
@@ -64,7 +69,7 @@
       </ion-button>
 
       <p class="register-text">
-        Não tens conta? <span class="register-link" (click)="onLogin()">Criar conta grátis</span>
+        Não tens conta? <span class="register-link" (click)="goToRegister()">Criar conta grátis</span>
       </p>
     </div>
 
