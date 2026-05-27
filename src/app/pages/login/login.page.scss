@@ -87,59 +87,6 @@ ion-content {
     }
   }
 
-  .btn-login {
-    --border-radius: 12px;
-    font-weight: 700;
-    margin-bottom: 24px;
-  }
-
-  .divider {
-    text-align: center;
-    position: relative;
-    margin-bottom: 24px;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: #e0e0e0;
-      z-index: 1;
-    }
-
-    span {
-      background: #ffffff;
-      padding: 0 16px;
-      color: #888888;
-      font-size: 14px;
-      position: relative;
-      z-index: 2;
-    }
-  }
-
-  .btn-google {
-    --border-radius: 12px;
-    --border-color: #e0e0e0;
-    --color: #1a1a1a;
-    font-weight: 600;
-    margin-bottom: 24px;
-  }
-
-  .register-text {
-    text-align: center;
-    color: #666666;
-    font-size: 14px;
-    margin: 0;
-
-    .register-link {
-      color: #0A7A3E;
-      font-weight: 700;
-    }
-  }
-
-  // ✅ Cores fixas em vez de variáveis CSS do Ionic
   .error-message {
     display: flex;
     align-items: center;
@@ -154,6 +101,24 @@ ion-content {
     ion-icon {
       font-size: 1.1rem;
       flex-shrink: 0;
+    }
+  }
+
+  .btn-login {
+    --border-radius: 12px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+
+  .register-text {
+    text-align: center;
+    color: #666666;
+    font-size: 14px;
+    margin: 0;
+
+    .register-link {
+      color: #0A7A3E;
+      font-weight: 700;
     }
   }
 }
