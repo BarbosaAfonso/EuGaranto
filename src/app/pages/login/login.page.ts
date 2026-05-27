@@ -31,6 +31,11 @@ export class LoginPage implements OnInit {
     this.loginForm.valueChanges.subscribe(() => this.loginError = '');
   }
 
+  ionViewWillEnter() {
+    this.loginForm.reset();
+    this.loginError = '';
+  }
+
   onLogin() {
     if (this.loginForm.invalid) return;
 
@@ -50,7 +55,6 @@ export class LoginPage implements OnInit {
     }, 800);
   }
 
-  // ✅ Abre o modal de recuperação de palavra-passe
   async openForgotPassword() {
     const modal = await this.modalCtrl.create({
       component: ForgotPasswordPage,
@@ -60,16 +64,10 @@ export class LoginPage implements OnInit {
 
     const { data } = await modal.onDidDismiss();
     if (data?.success) {
-      // Mostra feedback ao utilizador após reset com sucesso
-      this.loginError = ''; 
+      this.loginError = '';
     }
   }
 
-  loginWithGoogle() {
-    console.log('Botão do Google clicado');
-  }
-
-  // ✅ Navega para a nova página de registo criada pelo Ionic CLI
   goToRegister() {
     this.router.navigate(['/register']);
   }

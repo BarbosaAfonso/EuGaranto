@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   standalone: false,
@@ -8,10 +9,32 @@ import { Router } from '@angular/router';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage {
-  constructor(private router: Router) {}
+  userName = '';
+  userEmail = '';
+  userInitials = '';
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ionViewWillEnter() {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      this.userName = user.nome;
+      this.userEmail = user.email;
+      // Gera as iniciais a partir do nome (ex: "João Silva" → "JS")
+      this.userInitials = user.nome
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+    }
+  }
 
   logout() {
-    console.log('Sessão terminada');
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }
