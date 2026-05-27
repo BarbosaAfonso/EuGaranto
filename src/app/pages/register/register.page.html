@@ -1,0 +1,47 @@
+<ion-content class="ion-padding">
+  <div class="auth-container">
+    
+    <!-- Cabeçalho idêntico ao do Login (imagem image_31d56a.png) -->
+    <div class="logo-section ion-text-center ion-margin-top">
+      <div class="shield-icon">
+        <ion-icon name="shield" color="success" style="font-size: 48px;"></ion-icon>
+      </div>
+      <h1 style="font-weight: bold; color: #10dc60; margin: 8px 0 2px 0;">EuGaranto</h1>
+      <p style="color: #666; font-size: 14px; margin-top: 0;">O teu gestor de garantias inteligente</p>
+    </div>
+
+    <!-- Card de Criação de Conta -->
+    <div class="auth-card" style="background: white; border-radius: 20px; padding: 24px; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+      <h2 style="font-weight: bold; font-size: 20px; margin-bottom: 24px; color: #1e1e1e;">Criar conta</h2>
+
+      <!-- Campo Nome -->
+      <ion-item lines="none" class="custom-input" style="--background: transparent; margin-bottom: 16px;">
+        <ion-label position="stacked" style="font-size: 11px; font-weight: bold; color: #666; letter-spacing: 0.5px;">NOME</ion-label>
+        <ion-input type="text" placeholder="O teu nome" [(ngModel)]="nome" style="margin-top: 8px; --padding-start: 0px; font-size: 15px; color: #333; border-bottom: 1px solid #f0f0f0;"></ion-input>
+      </ion-item>
+
+      <!-- Campo Email -->
+      <ion-item lines="none" class="custom-input" style="--background: transparent; margin-bottom: 16px;">
+        <ion-label position="stacked" style="font-size: 11px; font-weight: bold; color: #666; letter-spacing: 0.5px;">EMAIL</ion-label>
+        <ion-input type="email" placeholder="alberto@exemplo.pt" [(ngModel)]="email" style="margin-top: 8px; --padding-start: 0px; font-size: 15px; color: #333; border-bottom: 1px solid #f0f0f0;"></ion-input>
+      </ion-item>
+
+      <!-- Campo Palavra-Passe -->
+      <ion-item lines="none" class="custom-input" style="--background: transparent; margin-bottom: 24px;">
+        <ion-label position="stacked" style="font-size: 11px; font-weight: bold; color: #666; letter-spacing: 0.5px;">PALAVRA-PASSE</ion-label>
+        <ion-input type="password" placeholder="••••••••" [(ngModel)]="password" style="margin-top: 8px; --padding-start: 0px; font-size: 15px; color: #333; border-bottom: 1px solid #f0f0f0;"></ion-input>
+      </ion-item>
+
+      <!-- Botão Criar Conta (com a cor verde clara da tua app) -->
+      <ion-button expand="block" mode="ios" (click)="criarConta()" style="--background: #8cf1b3; --color: #2b7047; font-weight: bold; margin-bottom: 20px; height: 45px; --border-radius: 10px; box-shadow: none;">
+        Criar conta
+      </ion-button>
+
+      <!-- Link para voltar -->
+      <p class="ion-text-center" style="font-size: 13px; color: #666; margin-bottom: 0;">
+        Já tens conta? <a (click)="irParaLogin()" style="color: #10dc60; font-weight: bold; text-decoration: none; cursor: pointer;">Entrar na conta</a>
+      </p>
+    </div>
+
+  </div>
+</ion-content>
