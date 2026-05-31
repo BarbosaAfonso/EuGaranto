@@ -59,27 +59,4 @@ ion-checkbox {
   --checkbox-background-checked: #0a7a3e;
   --border-color-checked: #0a7a3e;
   margin-inline-end: 14px;
-
-  .category-header {
-  cursor: pointer;
-
-  .category-count {
-    font-weight: 400;
-    color: #888888;
-    margin-left: 4px;
-  }
-
-  .chevron-icon {
-    color: #888888;
-    font-size: 16px;
-  }
-}
-
-.empty-category-item {
-  .empty-text {
-    color: #aaaaaa;
-    font-style: italic;
-    font-size: 13px;
-  }
-}
 }

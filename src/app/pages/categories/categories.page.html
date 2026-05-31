@@ -5,60 +5,43 @@
 </ion-header>
 
 <ion-content class="categories-content">
-
   <ion-button
     *ngIf="selectedIds.length > 0"
     expand="block"
     color="primary"
     class="ion-margin move-button"
-    (click)="moveSelectedItems()">
+    (click)="moveSelectedItems()"
+  >
     Mover {{ selectedIds.length }} itens
   </ion-button>
 
   <ion-list class="categories-list" lines="none">
+    
+    <ng-container *ngFor="let group of groupedWarranties; trackBy: trackByCategory">
+      
+      <div
+        class="category-group"
+        *ngIf="group.items.length > 0"
+      >
+        <ion-item-divider sticky class="category-header">
+          <ion-label>{{ group.category }}</ion-label>
+        </ion-item-divider>
 
-    <div class="category-group"
-         *ngFor="let group of groupedWarranties; trackBy: trackByCategory">
-
-      <ion-item-divider sticky class="category-header"
-                        (click)="toggleCategory(group.category)">
-        <ion-label>
-          {{ group.category }}
-          <span class="category-count">({{ group.items.length }})</span>
-        </ion-label>
-        <ion-icon slot="end"
-                  [name]="isExpanded(group.category) ? 'chevron-up-outline' : 'chevron-down-outline'"
-                  class="chevron-icon">
-        </ion-icon>
-      </ion-item-divider>
-
-      <ng-container *ngIf="isExpanded(group.category)">
-
-        <!-- ✅ button e detail="true" tornam o item clicável com seta -->
-        <ion-item
-          button
-          detail="true"
-          *ngFor="let warranty of group.items; trackBy: trackByWarranty"
-          class="warranty-item"
-          (click)="goToDetail(warranty.id)">
-
+        <ion-item *ngFor="let warranty of group.items; trackBy: trackByWarranty" class="warranty-item">
           <ion-checkbox
             slot="start"
             [checked]="isSelected(warranty.id)"
             (ionChange)="toggleSelection(warranty.id)"
-            (click)="$event.stopPropagation()">
-          </ion-checkbox>
+          ></ion-checkbox>
 
           <ion-label>
             <h2>{{ getTitle(warranty) }}</h2>
             <p>Fim da garantia: {{ warranty.endDate | date:'dd/MM/yyyy' }}</p>
           </ion-label>
-
         </ion-item>
+      </div>
 
-      </ng-container>
-
-    </div>
+    </ng-container>
 
   </ion-list>
 </ion-content>

@@ -55,16 +55,15 @@
           placeholder="Ex: 3 anos">
         </ion-input>
 
-        <!-- ✅ interface="alert" tem scroll nativo e mostra todas as opções -->
         <ion-select
           formControlName="category"
           label="Categoria"
           labelPlacement="stacked"
           fill="outline"
-          interface="alert"
+          interface="popover"
           placeholder="Selecionar categoria">
-          <ion-select-option *ngFor="let name of allCategoryNames" [value]="name">
-            {{ name }}
+          <ion-select-option *ngFor="let category of categories" [value]="category.name">
+            {{ category.name }}
           </ion-select-option>
         </ion-select>
 
