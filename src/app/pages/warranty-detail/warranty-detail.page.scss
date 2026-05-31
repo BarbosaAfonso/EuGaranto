@@ -1,9 +1,17 @@
-.detail-content { --background: var(--color-bg); }
+.detail-content {
+  --background: var(--color-bg);
+}
 
+// Status banner
 .status-header {
-  margin: 16px; border-radius: 14px; padding: 14px 16px;
-  display: flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 700;
+  margin: 16px;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
 
   &.active  { background: var(--color-primary-light); color: var(--color-primary); }
   &.risk    { background: #FFF0E8; color: var(--color-accent-orange); }
@@ -12,74 +20,206 @@
   ion-icon { font-size: 18px; }
 }
 
-.info-card { margin: 0 16px 16px; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.07); }
-
-.btn-view-invoice {
+// Foto do talão
+.receipt-container {
   margin: 0 16px 16px;
-  --border-radius: 14px;
-  height: 48px;
-  font-weight: 600;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+
+  .receipt-photo {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    display: block;
+    border-radius: 16px;
+    cursor: pointer;
+  }
+
+  .receipt-hint {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 11px;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 2px 8px;
+    border-radius: 8px;
+  }
 }
 
+// Card de informações
+.info-card {
+  margin: 0 16px 16px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  --background: #ffffff; // ✅ força fundo branco
+
+  ion-card-content {
+    padding: 20px;
+    background: #ffffff; // ✅ garante também no conteúdo
+    border-radius: 16px;
+  }
+
+  .info-row {
+    padding: 4px 0;
+
+    &.two-col {
+      display: flex;
+      gap: 16px;
+
+      .info-block { flex: 1; }
+    }
+  }
+
+  .info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #999999; // ✅ cor fixa legível
+    letter-spacing: 0.8px;
+  }
+
+  .info-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a; // ✅ cor fixa legível
+  }
+
+  .info-divider {
+    height: 1px;
+    background: #f0f0f0;
+    margin: 14px 0;
+  }
+}
+
+// Barra de cobertura
 .coverage-wrap {
   margin-top: 12px;
+
   .coverage-label {
-    display: flex; justify-content: space-between;
-    font-size: 11px; font-weight: 700; letter-spacing: .5px;
-    color: var(--color-text-secondary); margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #999999;
+    margin-bottom: 6px;
   }
+
   .coverage-bar {
-    height: 6px; background: var(--color-border); border-radius: 3px; overflow: hidden;
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+
     .coverage-fill {
-      height: 100%; background: var(--color-primary); border-radius: 3px;
-      transition: width .6s ease;
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 3px;
+      transition: width 0.6s ease;
     }
   }
 }
 
+// Cabeçalhos de secção
 .section-header {
-  font-size: 11px; font-weight: 700; letter-spacing: .5px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
   color: var(--color-text-secondary);
-  padding: 8px 20px 8px;
+  padding: 8px 20px;
 }
 
-.alert-item-card { margin: 0 16px 10px; border-radius: 14px; }
+// Cards de alertas
+.alert-item-card {
+  margin: 0 16px 10px;
+  border-radius: 14px;
+  --background: #ffffff; // ✅
+}
 
 .alert-row {
-  display: flex; align-items: center; gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
   .alert-dot {
-    width: 10px; height: 10px; border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
     background: var(--color-border);
+    flex-shrink: 0;
+
     &.on { background: var(--color-primary); }
   }
-  .alert-info { flex: 1;
-    strong { display: block; }
-    small  { font-size: 11px; color: var(--color-text-secondary); }
-  }
-}
 
-.btn-new-alert {
-  --background: var(--color-primary); --border-radius: 14px; margin: 8px 16px;
-  height: 52px; font-weight: 700;
-}
+  .alert-info {
+    flex: 1;
 
-.docs-row {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 16px 16px;
-  .doc-card { border-radius: 14px; margin: 0;
-    ion-card-content {
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      ion-icon { font-size: 28px; color: var(--color-primary); }
-      strong   { font-size: 13px; }
-      small    { font-size: 11px; color: var(--color-text-secondary); }
+    strong {
+      display: block;
+      font-size: 14px;
+      color: #1a1a1a; // ✅
+    }
+
+    small {
+      font-size: 11px;
+      color: #888888; // ✅
     }
   }
 }
 
-.storage-detail-card { margin: 0 16px 24px; border-radius: 14px; overflow: hidden;
+// Botão novo alerta
+.btn-new-alert {
+  --background: var(--color-primary);
+  --border-radius: 14px;
+  margin: 8px 16px;
+  height: 52px;
+  font-weight: 700;
+}
+
+// Card de arrumação
+.storage-detail-card {
+  margin: 0 16px 24px;
+  border-radius: 14px;
+  overflow: hidden;
+  --background: #ffffff; // ✅
+
   .storage-row {
-    display: flex; align-items: center; gap: 12px;
-    ion-icon:first-child { font-size: 22px; color: var(--color-primary); }
-    div { flex: 1; strong { display: block; } small { font-size: 12px; color: var(--color-text-secondary); } }
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    ion-icon:first-child {
+      font-size: 22px;
+      color: var(--color-primary);
+    }
+
+    div {
+      flex: 1;
+
+      strong {
+        display: block;
+        color: #1a1a1a; // ✅
+      }
+
+      small {
+        font-size: 12px;
+        color: #888888; // ✅
+      }
+    }
   }
-  .storage-img { width: 100%; height: 140px; object-fit: cover; margin-top: 12px; border-radius: 10px; }
+
+  .storage-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    margin-top: 12px;
+    border-radius: 10px;
+  }
 }
