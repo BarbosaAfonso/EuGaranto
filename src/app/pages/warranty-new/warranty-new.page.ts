@@ -50,6 +50,7 @@ export class WarrantyNewPage implements OnInit {
     this.loadAllCategories();
   }
 
+  // ✅ Inclui categorias padrão + seed + garantias existentes
   private loadAllCategories(): void {
     this.categories = this.warrantyService.getCategories();
 
