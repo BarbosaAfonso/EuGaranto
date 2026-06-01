@@ -54,9 +54,19 @@
           <span class="info-label">CATEGORIA</span>
           <span class="info-value">{{ warranty.category }}</span>
         </div>
-        <div class="info-block" *ngIf="warranty.value">
-          <span class="info-label">VALOR</span>
-          <span class="info-value">{{ warranty.value | currency:'EUR':'symbol':'1.0-0' }}</span>
+        <div class="info-block" *ngIf="$any(warranty).compartment">
+          <span class="info-label">COMPARTIMENTO</span>
+          <span class="info-value">{{ $any(warranty).compartment }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="warranty.value">
+        <div class="info-divider"></div>
+        <div class="info-row">
+          <div class="info-block">
+            <span class="info-label">VALOR</span>
+            <span class="info-value">{{ warranty.value | currency:'EUR':'symbol':'1.0-0' }}</span>
+          </div>
         </div>
       </div>
 

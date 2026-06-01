@@ -16,7 +16,10 @@ export class WarrantyNewPage implements OnInit {
   capturedImage: string | undefined;
   warrantyForm!: FormGroup;
   categories: Category[] = [];
+  
+  // Listas limpas finais
   allCategoryNames: string[] = [];
+  allCompartmentNames: string[] = [];
 
   isEditMode = false;
   editingWarrantyId: string | null = null;
@@ -34,10 +37,11 @@ export class WarrantyNewPage implements OnInit {
       purchaseDate:    ['', Validators.required],
       duration:        ['', Validators.required],
       category:        ['', Validators.required],
-      storageLocation: [''], // Campo opcional
+      compartment:     ['', Validators.required],
+      storageLocation: [''], // ✅ NOVO: Campo opcional (sem Validators.required)
     });
 
-    this.loadAllCategories();
+    this.loadListsData();
 
     this.editingWarrantyId = this.route.snapshot.queryParamMap.get('id');
     if (this.editingWarrantyId) {
@@ -47,22 +51,66 @@ export class WarrantyNewPage implements OnInit {
   }
 
   ionViewWillEnter(): void {
-    this.loadAllCategories();
+    this.loadListsData();
   }
 
-  // ✅ Inclui categorias padrão + seed + garantias existentes
-  private loadAllCategories(): void {
+  private loadListsData(): void {
     this.categories = this.warrantyService.getCategories();
 
-    const defaultNames  = ['Cozinha', 'Escritório', 'Outros', 'Quarto', 'Sala de Estar'];
-    const seedNames     = this.categories.map(c => c.name);
-    const warrantyNames = this.warrantyService.getWarranties()
-      .map(w => w.category?.trim())
+    const defaultProductCats = [
+      'Telemóveis', 
+      'Informática & PC', 
+      'Grandes Eletrodomésticos', 
+      'Pequenos Eletrodomésticos', 
+      'Imagem e Som', 
+      'Ferramentas', 
+      'Outros'
+    ];
+
+    const compartmentKeywords = [
+      'Cozinha', 'Escritório', 'Quarto', 'Sala de Estar', 
+      'Casa de Banho', 'Garagem', 'Arrecadação', 'Lavandaria', 'Lavandaria / Marquise'
+    ];
+
+    const normalizeCategory = (name: string): string => {
+      if (!name) return '';
+      const text = name.trim();
+      if (text.toLowerCase() === 'telemoveis' || text.toLowerCase() === 'telemóveis') return 'Telemóveis';
+      if (text.toLowerCase() === 'informatica' || text.toLowerCase() === 'informática' || text.toLowerCase() === 'informática & pc') return 'Informática & PC';
+      return text;
+    };
+
+    const seedNames = this.categories.map(c => normalizeCategory(c.name));
+    const warrantyNames = this.warrantyService.getWarranties().map(w => normalizeCategory(w.category));
+
+    this.allCategoryNames = [...new Set([...defaultProductCats, ...seedNames, ...warrantyNames])]
+      .filter(name => name.length > 0)
+      .filter(name => !compartmentKeywords.some(room => name.toLowerCase().includes(room.toLowerCase())))
+      .sort((a, b) => a.localeCompare(b, 'pt'));
+
+    const defaultCompartments = [
+      'Cozinha', 
+      'Sala de Estar',
+      'Quarto', 
+      'Escritório', 
+      'Casa de Banho', 
+      'Lavandaria', 
+      'Garagem / Arrecadação', 
+      'Outros'
+    ];
+
+    const historicalCompartments = this.warrantyService.getWarranties()
+      .map(w => {
+        const comp = (w as any).compartment?.trim();
+        if (!comp && w.category && compartmentKeywords.some(room => w.category.includes(room))) {
+          return w.category.trim();
+        }
+        return comp;
+      })
       .filter((c): c is string => !!c);
 
-    this.allCategoryNames = [...new Set([...defaultNames, ...seedNames, ...warrantyNames])].sort((a, b) =>
-      a.localeCompare(b, 'pt')
-    );
+    this.allCompartmentNames = [...new Set([...defaultCompartments, ...historicalCompartments])]
+      .sort((a, b) => a.localeCompare(b, 'pt'));
   }
 
   async takePhoto(): Promise<void> {
@@ -75,8 +123,6 @@ export class WarrantyNewPage implements OnInit {
 
     if (!result.dataUrl) return;
 
-    const simulatedCategory = this.allCategoryNames[0] ?? 'Outros';
-
     this.capturedImage = result.dataUrl;
     this.isPhotoTaken = true;
 
@@ -85,7 +131,8 @@ export class WarrantyNewPage implements OnInit {
         productName:  'Smart TV Samsung',
         purchaseDate: new Date().toISOString().split('T')[0],
         duration:     '3 anos',
-        category:     simulatedCategory,
+        category:     'Imagem e Som', 
+        compartment:  'Sala de Estar',
       });
     }
   }
@@ -101,6 +148,7 @@ export class WarrantyNewPage implements OnInit {
     const expiryDate = this.warrantyService.calcExpiryDate(formValue.purchaseDate, warrantyMonths);
     const selectedCategory = this.categories.find(c => c.name === formValue.category);
 
+    // Se preencher a arrumação, damos um título automático para ativar o card de detalhes
     const storageLabelValue = formValue.storageLocation?.trim() ? 'Localização Física' : undefined;
 
     if (this.isEditMode && this.editingWarrantyId) {
@@ -117,8 +165,9 @@ export class WarrantyNewPage implements OnInit {
         warrantyMonths,
         capturedImage:   this.capturedImage ?? existing?.capturedImage,
         invoicePhotoUrl: this.capturedImage ?? existing?.invoicePhotoUrl,
-        storageLocation: formValue.storageLocation?.trim() || undefined,
+        storageLocation: formValue.storageLocation || undefined,
         storageLabel:    storageLabelValue ?? existing?.storageLabel,
+        ...({ compartment: formValue.compartment })
       };
       await this.warrantyService.saveWarranty(updated);
       await this.router.navigate(['/warranty-detail', this.editingWarrantyId]);
@@ -137,8 +186,9 @@ export class WarrantyNewPage implements OnInit {
         capturedImage:   this.capturedImage,
         invoicePhotoUrl: this.capturedImage,
         createdAt:       new Date().toISOString(),
-        storageLocation: formValue.storageLocation?.trim() || undefined,
+        storageLocation: formValue.storageLocation || undefined,
         storageLabel:    storageLabelValue,
+        ...({ compartment: formValue.compartment })
       };
       await this.warrantyService.addWarranty(warranty);
       await this.router.navigate(['/tabs/home']);
@@ -157,7 +207,8 @@ export class WarrantyNewPage implements OnInit {
       purchaseDate:    warranty.purchaseDate,
       duration:        `${years} anos`,
       category:        warranty.category,
-      storageLocation: warranty.storageLocation || '',
+      compartment:     (warranty as any).compartment || '',
+      storageLocation: warranty.storageLocation || '', // ✅ Carrega o texto opcional ao editar
     });
 
     this.capturedImage = warranty.capturedImage;
