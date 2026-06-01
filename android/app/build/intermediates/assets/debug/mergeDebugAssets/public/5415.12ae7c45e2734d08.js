@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkapp=self.webpackChunkapp||[]).push([[5415],{5415(c,t,n){n.r(t),n.d(t,{ScreenOrientation:()=>o});const o=(0,n(5083).F3)("ScreenOrientation",{web:()=>n.e(9061).then(n.bind(n,9061)).then(a=>new a.ScreenOrientationWeb)})}}]);
