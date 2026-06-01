@@ -55,16 +55,27 @@
           placeholder="Ex: 3 anos">
         </ion-input>
 
-        <!-- ✅ interface="alert" tem scroll nativo e mostra todas as opções -->
         <ion-select
           formControlName="category"
-          label="Categoria"
+          label="Categoria do Produto"
           labelPlacement="stacked"
           fill="outline"
           interface="alert"
-          placeholder="Selecionar categoria">
+          placeholder="Selecionar categoria do objeto">
           <ion-select-option *ngFor="let name of allCategoryNames" [value]="name">
             {{ name }}
+          </ion-select-option>
+        </ion-select>
+
+        <ion-select
+          formControlName="compartment"
+          label="Compartimento da Casa"
+          labelPlacement="stacked"
+          fill="outline"
+          interface="alert"
+          placeholder="Em que divisão fica guardado?">
+          <ion-select-option *ngFor="let comp of allCompartmentNames" [value]="comp">
+            {{ comp }}
           </ion-select-option>
         </ion-select>
 
