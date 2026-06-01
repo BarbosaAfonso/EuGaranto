@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Warranty, getWarrantyTitle } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
@@ -19,18 +20,20 @@ export class CategoriesPage implements OnInit, OnDestroy {
   availableCategories = ['Sala de Estar', 'Cozinha', 'Quarto', 'Escritório', 'Outros'];
   groupedWarranties: WarrantyGroup[] = [];
   selectedIds: string[] = [];
+  expandedCategories: Set<string> = new Set();
 
   private sub?: Subscription;
 
   constructor(
     private warrantyService: WarrantyService,
     private alertController: AlertController,
+    private router: Router, // ✅
   ) {}
 
   ngOnInit(): void {
     this.sub = this.warrantyService.warranties$.subscribe(warranties => {
       this.groupWarrantiesByCategory(warranties);
-      this.selectedIds = this.selectedIds.filter(id => warranties.some(warranty => warranty.id === id));
+      this.selectedIds = this.selectedIds.filter(id => warranties.some(w => w.id === id));
     });
   }
 
@@ -52,14 +55,29 @@ export class CategoriesPage implements OnInit, OnDestroy {
 
   toggleSelection(id: string): void {
     this.selectedIds = this.isSelected(id)
-      ? this.selectedIds.filter(selectedId => selectedId !== id)
+      ? this.selectedIds.filter(sid => sid !== id)
       : [...this.selectedIds, id];
   }
 
-  async moveSelectedItems(): Promise<void> {
-    if (!this.selectedIds.length) {
-      return;
+  toggleCategory(category: string): void {
+    if (this.expandedCategories.has(category)) {
+      this.expandedCategories.delete(category);
+    } else {
+      this.expandedCategories.add(category);
     }
+  }
+
+  isExpanded(category: string): boolean {
+    return this.expandedCategories.has(category);
+  }
+
+  // ✅ Navega para o detalhe da garantia
+  goToDetail(id: string): void {
+    this.router.navigate(['/warranty-detail', id]);
+  }
+
+  async moveSelectedItems(): Promise<void> {
+    if (!this.selectedIds.length) return;
 
     const alert = await this.alertController.create({
       header: 'Mover garantias',
@@ -70,17 +88,11 @@ export class CategoriesPage implements OnInit, OnDestroy {
         value: category,
       })),
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Mover',
           handler: (category: string) => {
-            if (!category) {
-              return false;
-            }
-
+            if (!category) return false;
             void this.applyCategoryMove(category);
             return true;
           },
@@ -105,15 +117,23 @@ export class CategoriesPage implements OnInit, OnDestroy {
   }
 
   private groupWarrantiesByCategory(warranties: Warranty[]): void {
-    const serviceCategories = this.warrantyService.getCategories().map(category => category.name);
-    const warrantyCategories = warranties.map(warranty => this.normalizeCategory(warranty.category));
+    const serviceCategories = this.warrantyService.getCategories().map(c => c.name);
+    const warrantyCategories = warranties.map(w => this.normalizeCategory(w.category));
     const categories = [...new Set([...this.availableCategories, ...serviceCategories, ...warrantyCategories])];
+
+    categories.sort((a, b) => a.localeCompare(b, 'pt'));
 
     this.availableCategories = categories;
     this.groupedWarranties = categories.map(category => ({
       category,
-      items: warranties.filter(warranty => this.normalizeCategory(warranty.category) === category),
+      items: warranties.filter(w => this.normalizeCategory(w.category) === category),
     }));
+
+    this.groupedWarranties.forEach(group => {
+      if (group.items.length > 0) {
+        this.expandedCategories.add(group.category);
+      }
+    });
   }
 
   private normalizeCategory(category?: string): string {

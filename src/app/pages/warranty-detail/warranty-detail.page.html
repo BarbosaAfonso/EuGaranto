@@ -5,41 +5,62 @@
     </ion-buttons>
     <ion-title>{{ warranty?.productName || warranty?.title }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button fill="clear"><ion-icon name="pencil-outline"></ion-icon></ion-button>
+      <ion-button fill="clear" (click)="editWarranty()">
+        <ion-icon name="pencil-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="detail-content" *ngIf="warranty">
+
   <div class="status-header" [ngClass]="getStatusClass()">
     <ion-icon name="checkmark-circle-outline"></ion-icon>
     <strong>{{ getStatusText() }}</strong>
   </div>
 
+  <div class="receipt-container" *ngIf="warranty.capturedImage">
+    <img [src]="warranty.capturedImage" class="receipt-photo" alt="Talão/Fatura" (click)="verFatura()" />
+    <span class="receipt-hint">Toca para ampliar</span>
+  </div>
+
   <ion-card class="info-card">
     <ion-card-content>
-      <ion-list lines="inset">
-        <ion-item>
-          <ion-label>Produto</ion-label>
-          <ion-note slot="end"><strong>{{ warranty.productName || warranty.title }}</strong></ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Comprado em</ion-label>
-          <ion-note slot="end"><strong>{{ warranty.purchaseDate | date:'dd/MM/yyyy' }}</strong></ion-note>
-        </ion-item>
-        <ion-item>
-          <ion-label>Termina em</ion-label>
-          <ion-note slot="end"><strong>{{ getWarrantyEndDate() | date:'dd/MM/yyyy' }}</strong></ion-note>
-        </ion-item>
-        <ion-item *ngIf="warranty.value">
-          <ion-label>Valor</ion-label>
-          <ion-note slot="end"><strong>{{ warranty.value | currency:'EUR':'symbol':'1.0-0' }}</strong></ion-note>
-        </ion-item>
-        <ion-item lines="none">
-          <ion-label>Categoria</ion-label>
-          <ion-note slot="end"><strong>{{ warranty.category }}</strong></ion-note>
-        </ion-item>
-      </ion-list>
+
+      <div class="info-row">
+        <div class="info-block">
+          <span class="info-label">PRODUTO</span>
+          <span class="info-value">{{ warranty.productName || warranty.title }}</span>
+        </div>
+      </div>
+
+      <div class="info-divider"></div>
+
+      <div class="info-row two-col">
+        <div class="info-block">
+          <span class="info-label">COMPRADO EM</span>
+          <span class="info-value">{{ warranty.purchaseDate | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="info-block">
+          <span class="info-label">TERMINA EM</span>
+          <span class="info-value">{{ getWarrantyEndDate() | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+
+      <div class="info-divider"></div>
+
+      <div class="info-row two-col">
+        <div class="info-block">
+          <span class="info-label">CATEGORIA</span>
+          <span class="info-value">{{ warranty.category }}</span>
+        </div>
+        <div class="info-block" *ngIf="warranty.value">
+          <span class="info-label">VALOR</span>
+          <span class="info-value">{{ warranty.value | currency:'EUR':'symbol':'1.0-0' }}</span>
+        </div>
+      </div>
+
+      <div class="info-divider"></div>
 
       <div class="coverage-wrap">
         <div class="coverage-label">
@@ -50,19 +71,9 @@
           <div class="coverage-fill" [style.width.%]="coveragePercent"></div>
         </div>
       </div>
+
     </ion-card-content>
   </ion-card>
-
-  <ion-button
-    expand="block"
-    fill="outline"
-    color="dark"
-    class="btn-view-invoice"
-    (click)="verFatura()"
-    *ngIf="warranty.capturedImage">
-    <ion-icon name="document-text-outline" slot="start"></ion-icon>
-    Visualizar Talão/Fatura
-  </ion-button>
 
   <div class="section-header">ALERTAS CONFIGURADOS ({{ alerts.length }})</div>
 
@@ -81,28 +92,10 @@
 
   <ion-button expand="block" class="btn-new-alert" (click)="addAlert()">
     <ion-icon name="add-outline" slot="start"></ion-icon>
-    + Novo Alerta
+    Novo Alerta
   </ion-button>
 
-  <div class="docs-row">
-    <ion-card class="doc-card" *ngIf="warranty.invoicePhotoUrl || warranty.capturedImage">
-      <ion-card-content>
-        <ion-icon name="receipt-outline"></ion-icon>
-        <strong>Fatura</strong>
-        <small>Ver documento</small>
-      </ion-card-content>
-    </ion-card>
-    <ion-card class="doc-card">
-      <ion-card-content>
-        <ion-icon name="headset-outline"></ion-icon>
-        <strong>Suporte {{ warranty.brand || 'da marca' }}</strong>
-        <small>Contactar</small>
-      </ion-card-content>
-    </ion-card>
-  </div>
-
   <div class="section-header" *ngIf="warranty.storageLabel">LOCAL DE ARRUMAÇÃO</div>
-
   <ion-card class="storage-detail-card" *ngIf="warranty.storageLabel || warranty.storagePhotoUrl">
     <ion-card-content>
       <div class="storage-row">
@@ -116,4 +109,5 @@
       <img *ngIf="warranty.storagePhotoUrl" [src]="warranty.storagePhotoUrl" class="storage-img" alt="Local de arrumação">
     </ion-card-content>
   </ion-card>
+
 </ion-content>
