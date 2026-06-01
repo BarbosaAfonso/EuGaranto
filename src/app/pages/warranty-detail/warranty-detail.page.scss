@@ -223,3 +223,33 @@
     border-radius: 10px;
   }
 }
+
+// Overlay de Imagem Inteira
+.image-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+
+  .image-overlay-content {
+    width: 100%;
+    max-width: 500px;
+
+    img {
+      width: 100%;
+      border-radius: 16px;
+      object-fit: contain;
+      max-height: 70vh;
+    }
+
+    .btn-fechar {
+      margin-top: 16px;
+      --border-radius: 12px;
+      font-weight: 600;
+    }
+  }
+}

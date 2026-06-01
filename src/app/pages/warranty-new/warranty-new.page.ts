@@ -30,10 +30,11 @@ export class WarrantyNewPage implements OnInit {
 
   ngOnInit(): void {
     this.warrantyForm = this.fb.group({
-      productName:  ['', Validators.required],
-      purchaseDate: ['', Validators.required],
-      duration:     ['', Validators.required],
-      category:     ['', Validators.required],
+      productName:     ['', Validators.required],
+      purchaseDate:    ['', Validators.required],
+      duration:        ['', Validators.required],
+      category:        ['', Validators.required],
+      storageLocation: [''], // Campo opcional
     });
 
     this.loadAllCategories();
@@ -100,6 +101,8 @@ export class WarrantyNewPage implements OnInit {
     const expiryDate = this.warrantyService.calcExpiryDate(formValue.purchaseDate, warrantyMonths);
     const selectedCategory = this.categories.find(c => c.name === formValue.category);
 
+    const storageLabelValue = formValue.storageLocation?.trim() ? 'Localização Física' : undefined;
+
     if (this.isEditMode && this.editingWarrantyId) {
       const existing = this.warrantyService.getWarrantyById(this.editingWarrantyId);
       const updated: Warranty = {
@@ -114,6 +117,8 @@ export class WarrantyNewPage implements OnInit {
         warrantyMonths,
         capturedImage:   this.capturedImage ?? existing?.capturedImage,
         invoicePhotoUrl: this.capturedImage ?? existing?.invoicePhotoUrl,
+        storageLocation: formValue.storageLocation?.trim() || undefined,
+        storageLabel:    storageLabelValue ?? existing?.storageLabel,
       };
       await this.warrantyService.saveWarranty(updated);
       await this.router.navigate(['/warranty-detail', this.editingWarrantyId]);
@@ -132,6 +137,8 @@ export class WarrantyNewPage implements OnInit {
         capturedImage:   this.capturedImage,
         invoicePhotoUrl: this.capturedImage,
         createdAt:       new Date().toISOString(),
+        storageLocation: formValue.storageLocation?.trim() || undefined,
+        storageLabel:    storageLabelValue,
       };
       await this.warrantyService.addWarranty(warranty);
       await this.router.navigate(['/tabs/home']);
@@ -146,10 +153,11 @@ export class WarrantyNewPage implements OnInit {
     const years  = Math.round(months / 12);
 
     this.warrantyForm.patchValue({
-      productName:  warranty.productName || warranty.title,
-      purchaseDate: warranty.purchaseDate,
-      duration:     `${years} anos`,
-      category:     warranty.category,
+      productName:     warranty.productName || warranty.title,
+      purchaseDate:    warranty.purchaseDate,
+      duration:        `${years} anos`,
+      category:        warranty.category,
+      storageLocation: warranty.storageLocation || '',
     });
 
     this.capturedImage = warranty.capturedImage;

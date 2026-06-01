@@ -14,6 +14,7 @@ export class WarrantyDetailPage implements OnInit {
   warranty?: Warranty;
   alerts: Alert[] = [];
   coveragePercent = 0;
+  showImageOverlay = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -56,15 +57,14 @@ export class WarrantyDetailPage implements OnInit {
     this.router.navigate(['/warranty-new'], { queryParams: { id: this.warranty?.id } });
   }
 
-  async verFatura(): Promise<void> {
-    if (!this.warranty?.capturedImage) return;
-    const alert = await this.alertController.create({
-      header: 'Talão/Fatura',
-      message: `<img src="${this.warranty.capturedImage}" alt="Talão ou fatura" style="width:100%;border-radius:12px;object-fit:cover;" />`,
-      buttons: ['Fechar'],
-      cssClass: 'invoice-preview-alert',
-    });
-    await alert.present();
+  verFatura(): void {
+    if (this.warranty?.capturedImage) {
+      this.showImageOverlay = true;
+    }
+  }
+
+  fecharImagem(): void {
+    this.showImageOverlay = false;
   }
 
   formatDate(date: string): string {

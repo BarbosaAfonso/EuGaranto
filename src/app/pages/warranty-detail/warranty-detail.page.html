@@ -111,3 +111,9 @@
   </ion-card>
 
 </ion-content>
+
+<div class="image-overlay" *ngIf="showImageOverlay" (click)="fecharImagem()">
+  <div class="image-overlay-content" (click)="$event.stopPropagation()">
+    <img [src]="warranty?.capturedImage" alt="Talão/Fatura" />
+  </div>
+</div>

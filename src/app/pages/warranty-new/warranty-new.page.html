@@ -68,6 +68,23 @@
           </ion-select-option>
         </ion-select>
 
+        <ion-textarea
+          formControlName="storageLocation"
+          label="Onde guardou o papel físico? (Opcional)"
+          labelPlacement="stacked"
+          fill="outline"
+          placeholder="Ex: Armário do corredor, gaveta de baixo..."
+          [autoGrow]="true"
+          rows="3"
+          style="--background: #000000; 
+                 --color: #ffffff; 
+                 --border-radius: 14px; 
+                 --padding-start: 16px; 
+                 --padding-end: 16px; 
+                 --padding-top: 4px; 
+                 --padding-bottom: 16px;">
+        </ion-textarea>
+
         <ion-button type="submit" expand="block" color="success" [disabled]="warrantyForm.invalid">
           Confirmar e Avançar
         </ion-button>
