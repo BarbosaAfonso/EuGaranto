@@ -5,6 +5,7 @@ export interface Warranty {
   endDate: string;
   status: 'ATIVA' | 'EM RISCO' | 'EXPIRADA';
   category: string;
+  compartment?: string;
   productName?: string;
   brand?: string;
   warrantyMonths?: number;

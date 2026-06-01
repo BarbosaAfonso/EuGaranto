@@ -14,6 +14,7 @@ export class WarrantyDetailPage implements OnInit {
   warranty?: Warranty;
   alerts: Alert[] = [];
   coveragePercent = 0;
+  showImageOverlay = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -35,10 +36,7 @@ export class WarrantyDetailPage implements OnInit {
   }
 
   getStatusText(): string {
-    if (!this.warranty) {
-      return '';
-    }
-
+    if (!this.warranty) return '';
     const statusLabel = this.getStatusClass() === 'active' ? 'ATIVA' : this.getStatusClass() === 'risk' ? 'EM RISCO' : 'EXPIRADA';
     return `GARANTIA ${statusLabel} · ${getRemainingLabel(this.warranty)}`;
   }
@@ -55,19 +53,18 @@ export class WarrantyDetailPage implements OnInit {
     this.router.navigate(['/alert-new', this.warranty?.id]);
   }
 
-  async verFatura(): Promise<void> {
-    if (!this.warranty?.capturedImage) {
-      return;
+  editWarranty(): void {
+    this.router.navigate(['/warranty-new'], { queryParams: { id: this.warranty?.id } });
+  }
+
+  verFatura(): void {
+    if (this.warranty?.capturedImage) {
+      this.showImageOverlay = true;
     }
+  }
 
-    const alert = await this.alertController.create({
-      header: 'Talão/Fatura',
-      message: `<img src="${this.warranty.capturedImage}" alt="Talão ou fatura" style="width:100%;border-radius:12px;object-fit:cover;" />`,
-      buttons: ['Fechar'],
-      cssClass: 'invoice-preview-alert',
-    });
-
-    await alert.present();
+  fecharImagem(): void {
+    this.showImageOverlay = false;
   }
 
   formatDate(date: string): string {
@@ -83,7 +80,6 @@ export class WarrantyDetailPage implements OnInit {
       this.coveragePercent = 0;
       return;
     }
-
     this.warranty = this.warrantyService.getWarrantyById(id);
     this.alerts = this.warrantyService.getAlertsForWarranty(id);
     this.coveragePercent = this.warranty
