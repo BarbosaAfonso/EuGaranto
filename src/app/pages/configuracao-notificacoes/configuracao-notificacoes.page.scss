@@ -1,0 +1,41 @@
+.settings-content {
+  --background: #f8f9fa;
+}
+
+ion-toolbar {
+  --background: #f8f9fa;
+  --color: var(--color-text-primary);
+}
+
+ion-title {
+  text-align: center;
+  font-weight: 700;
+}
+
+.settings-list {
+  margin-top: 20px;
+}
+
+ion-list {
+  background: transparent;
+}
+
+ion-item {
+  --background: #ffffff;
+  --border-color: #edf1ed;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --min-height: 72px;
+}
+
+ion-label h2 {
+  margin: 0 0 4px;
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+ion-label p {
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+}
