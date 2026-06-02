@@ -1,9 +1,19 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'EuGaranto',
-  webDir: 'www'
+  appId: 'pt.eugaranto.app', 
+  appName: 'EuGaranto',      
+  webDir: 'www',             
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 2000, 
+      launchAutoHide: true,
+      backgroundColor: "#ffffff", 
+      androidSplashResourceName: "splash", 
+      androidScaleType: "CENTER_CROP",
+      showSpinner: false
+    }
+  }
 };
 
 export default config;
