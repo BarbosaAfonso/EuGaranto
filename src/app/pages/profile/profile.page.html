@@ -14,17 +14,17 @@
   </section>
 
   <ion-list inset="true" class="profile-list">
-    <ion-item button="true" detail="true">
+    <ion-item button="true" detail="true" (click)="goToNotifications()">
       <ion-icon slot="start" name="notifications-outline" color="success"></ion-icon>
       <ion-label>Notificações</ion-label>
     </ion-item>
 
-    <ion-item button="true" detail="true">
+    <ion-item button="true" detail="true" (click)="openPrivacyModal()">
       <ion-icon slot="start" name="shield-checkmark-outline" color="success"></ion-icon>
       <ion-label>Privacidade</ion-label>
     </ion-item>
 
-    <ion-item button="true" detail="true">
+    <ion-item button="true" detail="true" (click)="goToHelp()">
       <ion-icon slot="start" name="help-circle-outline" color="success"></ion-icon>
       <ion-label>Ajuda</ion-label>
     </ion-item>
@@ -36,4 +36,69 @@
       <ion-label color="danger">Terminar sessão</ion-label>
     </ion-item>
   </ion-list>
+
+  <ion-modal [isOpen]="privacyModalOpen" (didDismiss)="closePrivacyModal()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Privacidade e Segurança</ion-title>
+          <ion-buttons slot="end">
+            <ion-button fill="clear" (click)="closePrivacyModal()" aria-label="Fechar">
+              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="privacy-modal-content">
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="password-form">
+          <h2>Alterar Palavra-passe</h2>
+
+          <ion-list inset="true">
+            <ion-item>
+              <ion-input
+                label="Palavra-passe antiga"
+                labelPlacement="stacked"
+                type="password"
+                formControlName="oldPassword"
+                autocomplete="current-password">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-input
+                label="Nova palavra-passe"
+                labelPlacement="stacked"
+                type="password"
+                formControlName="newPassword"
+                autocomplete="new-password">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-input
+                label="Confirmar nova palavra-passe"
+                labelPlacement="stacked"
+                type="password"
+                formControlName="confirmPassword"
+                autocomplete="new-password">
+              </ion-input>
+            </ion-item>
+          </ion-list>
+
+          <ion-text color="danger" *ngIf="passwordError">
+            <p class="form-feedback">{{ passwordError }}</p>
+          </ion-text>
+
+          <ion-text color="success" *ngIf="passwordMessage">
+            <p class="form-feedback">{{ passwordMessage }}</p>
+          </ion-text>
+
+          <ion-button expand="block" type="submit" [disabled]="passwordForm.invalid">
+            Guardar Palavra-passe
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
