@@ -9,14 +9,16 @@
 
 <ion-content class="cat-new-content">
 
-  <form [formGroup]="categoryForm">
+  <form [formGroup]="categoryForm" class="category-form">
 
     <div class="field-group">
-      <label class="field-label">NOME DA CATEGORIA</label>
-      <ion-input formControlName="name" placeholder="ex: Eletrodomésticos" fill="outline">
-        <ion-icon *ngIf="categoryForm.get('name')?.valid && categoryForm.get('name')?.dirty"
-                  name="checkmark-circle" slot="end" color="success"></ion-icon>
-      </ion-input>
+      <ion-label class="field-label">NOME DA CATEGORIA</ion-label>
+      <div class="input-wrapper">
+        <ion-input formControlName="name" placeholder="ex: Eletrodomésticos">
+          <ion-icon *ngIf="categoryForm.get('name')?.valid && categoryForm.get('name')?.dirty"
+                    name="checkmark-circle" slot="end" color="success"></ion-icon>
+        </ion-input>
+      </div>
     </div>
 
     <div class="field-group">

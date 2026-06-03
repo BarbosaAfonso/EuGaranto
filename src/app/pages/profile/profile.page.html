@@ -29,7 +29,7 @@
       <ion-label>Ajuda</ion-label>
     </ion-item>
 
-    <!-- ✅ Toggle com ionChange -->
+    <!-- Toggle com ionChange -->
     <ion-item>
       <ion-icon slot="start"
                 [name]="isDarkMode ? 'moon-outline' : 'sunny-outline'"
@@ -54,14 +54,12 @@
 
   <ion-modal [isOpen]="privacyModalOpen" (didDismiss)="closePrivacyModal()">
     <ng-template>
-      <ion-header class="ion-no-border">
+      <ion-header class="ion-no-border subprofile-header">
         <ion-toolbar>
-          <ion-title>Privacidade e Segurança</ion-title>
-          <ion-buttons slot="end">
-            <ion-button fill="clear" (click)="closePrivacyModal()" aria-label="Fechar">
-              <ion-icon slot="icon-only" name="close-outline"></ion-icon>
-            </ion-button>
+          <ion-buttons slot="start">
+            <ion-back-button text="" defaultHref="/tabs/profile" (click)="closePrivacyModal()"></ion-back-button>
           </ion-buttons>
+          <ion-title>Privacidade e Segurança</ion-title>
         </ion-toolbar>
       </ion-header>
 
