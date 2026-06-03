@@ -131,3 +131,33 @@ html.ion-palette-dark {
     color: var(--color-primary) !important;
   }
 }
+
+.subprofile-header {
+  ion-toolbar {
+    --background: #f8f9fa;
+    --color: var(--color-text-primary);
+    position: relative;
+  }
+
+  ion-buttons[slot="start"] {
+    position: relative;
+    z-index: 2;
+  }
+
+  ion-back-button {
+    --color: #000000;
+    --icon-font-size: 24px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+    min-width: 44px;
+  }
+
+  ion-title {
+    position: absolute;
+    inset: 0;
+    padding: 0 64px;
+    text-align: center;
+    font-weight: 700;
+    pointer-events: none;
+  }
+}
