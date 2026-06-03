@@ -35,15 +35,7 @@ export class WarrantyService {
       this.http.get<{ categories: Category[]; alerts: Alert[] }>('assets/data/seed.json')
     );
 
-    let warranties: Warranty[] = [];
-    if (Array.isArray(storedWarranties)) {
-      warranties = storedWarranties;
-    } else {
-      warranties = await firstValueFrom(
-        this.http.get<Warranty[]>('assets/data/warranties.json')
-      );
-      await this.storage.set(this.warrantiesStorageKey, warranties);
-    }
+    const warranties: Warranty[] = Array.isArray(storedWarranties) ? storedWarranties : [];
 
     // ✅ Usa categorias do storage se existirem, senão usa as do seed
     if (Array.isArray(storedCategories) && storedCategories.length > 0) {
@@ -53,8 +45,12 @@ export class WarrantyService {
       await this.storage.set(this.categoriesStorageKey, this.categories);
     }
 
-    this.alerts     = Array.isArray(storedAlerts) ? storedAlerts : (seed.alerts || []);
+    this.alerts     = Array.isArray(storedAlerts) ? storedAlerts : [];
     this.warranties = warranties.map(warranty => this.normalizeWarranty(warranty));
+
+    if (!Array.isArray(storedWarranties)) {
+      await this.persistWarranties();
+    }
 
     if (!Array.isArray(storedAlerts)) {
       await this.persistAlerts();
