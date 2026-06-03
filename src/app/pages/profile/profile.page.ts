@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 
@@ -15,6 +15,7 @@ export class ProfilePage {
   userEmail = '';
   userInitials = '';
   isDarkMode = false;
+
   privacyModalOpen = false;
   passwordForm: FormGroup;
   passwordMessage = '';
@@ -25,15 +26,12 @@ export class ProfilePage {
     private router: Router,
     private authService: AuthService,
     private themeService: ThemeService
-  ) {}
-    private authService: AuthService
   ) {
     this.passwordForm = this.fb.group({
-      oldPassword: ['', [Validators.required, Validators.minLength(6)]],
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      oldPassword:     ['', [Validators.required, Validators.minLength(6)]],
+      newPassword:     ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
     });
-
     this.passwordForm.valueChanges.subscribe(() => {
       this.passwordMessage = '';
       this.passwordError = '';
@@ -56,7 +54,6 @@ export class ProfilePage {
     this.isDarkMode = this.themeService.isDarkMode();
   }
 
-  // ✅ Recebe o evento do toggle e aplica o modo
   onThemeChange(event: any): void {
     const enabled = event.detail.checked;
     this.themeService.setDarkMode(enabled);
@@ -91,7 +88,7 @@ export class ProfilePage {
     const user = this.authService.getCurrentUser();
     const { oldPassword, newPassword, confirmPassword } = this.passwordForm.value;
 
-    if (!user || user.password !== oldPassword) {
+    if (!user || !this.authService.login(user.email, oldPassword)) {
       this.passwordError = 'A palavra-passe antiga nao esta correta.';
       return;
     }
