@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // ✅ Adicionado ReactiveFormsModule
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { ForgotPasswordPageRoutingModule } from './forgot-password-routing.module';
@@ -10,11 +10,11 @@ import { ForgotPasswordPage } from './forgot-password.page';
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule, // ✅ Adicionado aqui para o [formGroup] funcionar
+    ReactiveFormsModule,
     IonicModule,
     ForgotPasswordPageRoutingModule
   ],
   declarations: [ForgotPasswordPage],
-  exports: [ForgotPasswordPage] // ✅ Exportado para que o modulo de Login tenha acesso
+  exports: [ForgotPasswordPage]
 })
 export class ForgotPasswordPageModule {}

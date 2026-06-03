@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
-import { AuthService } from '../../services/auth.service'; // ✅ Importa o serviço
+import { AuthService } from '../../services/auth.service'; // Importa o serviço
 
 @Component({
   selector: 'app-register',
@@ -17,7 +17,7 @@ export class RegisterPage implements OnInit {
   constructor(
     private router: Router,
     private alertController: AlertController,
-    private authService: AuthService // ✅ Injeta o serviço aqui no construtor
+    private authService: AuthService // Injeta o serviço aqui no construtor
   ) { }
 
   ngOnInit() {}
@@ -38,7 +38,7 @@ export class RegisterPage implements OnInit {
       return;
     }
 
-    // ✅ Tenta registar o utilizador no localStorage através do serviço
+    // Tenta registar o utilizador no localStorage através do serviço
     const sucesso = this.authService.register({
       nome: this.nome,
       email: this.email,

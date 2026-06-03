@@ -53,7 +53,7 @@
   margin: 0 16px 16px;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
-  --background: var(--color-surface); // ✅ variável do tema
+  --background: var(--color-surface);
 
   ion-card-content {
     padding: 20px;
@@ -79,19 +79,19 @@
   .info-label {
     font-size: 10px;
     font-weight: 700;
-    color: var(--color-text-secondary); // ✅
+    color: var(--color-text-secondary);
     letter-spacing: 0.8px;
   }
 
   .info-value {
     font-size: 15px;
     font-weight: 600;
-    color: var(--color-text-primary); // ✅
+    color: var(--color-text-primary); 
   }
 
   .info-divider {
     height: 1px;
-    background: var(--color-border); // ✅
+    background: var(--color-border); 
     margin: 14px 0;
   }
 }
@@ -106,13 +106,13 @@
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    color: var(--color-text-secondary); // ✅
+    color: var(--color-text-secondary);
     margin-bottom: 6px;
   }
 
   .coverage-bar {
     height: 6px;
-    background: var(--color-border); // ✅
+    background: var(--color-border);
     border-radius: 3px;
     overflow: hidden;
 
@@ -138,7 +138,7 @@
 .alert-item-card {
   margin: 0 16px 10px;
   border-radius: 14px;
-  --background: var(--color-surface); // ✅ segue o tema
+  --background: var(--color-surface);
 }
 
 .alert-row {
@@ -162,12 +162,12 @@
     strong {
       display: block;
       font-size: 14px;
-      color: var(--color-text-primary); // ✅
+      color: var(--color-text-primary);
     }
 
     small {
       font-size: 11px;
-      color: var(--color-text-secondary); // ✅
+      color: var(--color-text-secondary);
     }
   }
 }
@@ -186,7 +186,7 @@
   margin: 0 16px 24px;
   border-radius: 14px;
   overflow: hidden;
-  --background: var(--color-surface); // ✅ segue o tema
+  --background: var(--color-surface);
 
   .storage-row {
     display: flex;
@@ -203,12 +203,12 @@
 
       strong {
         display: block;
-        color: var(--color-text-primary); // ✅
+        color: var(--color-text-primary);
       }
 
       small {
         font-size: 12px;
-        color: var(--color-text-secondary); // ✅
+        color: var(--color-text-secondary); 
       }
     }
   }

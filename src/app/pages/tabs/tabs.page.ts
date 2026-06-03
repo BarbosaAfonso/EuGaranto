@@ -19,7 +19,7 @@ export class TabsPage {
     e.stopPropagation();
     const sheet = await this.actionSheet.create({
       header: 'O que pretende adicionar?',
-      cssClass: 'add-action-sheet', // ✅ classe para estilizar
+      cssClass: 'add-action-sheet',
       buttons: [
         {
           text: 'Nova Garantia',

@@ -9,7 +9,7 @@
 ion-toolbar {
   --background: transparent;
   --padding-top: 20px;
-  --padding-start: 16px;     /* ✅ menos padding lateral → mais espaço para o texto */
+  --padding-start: 16px;
   --padding-end: 16px;
   --padding-bottom: 4px;
 }
@@ -21,7 +21,7 @@ ion-toolbar {
 .hero-subtitle {
   margin: 0 0 8px;
   color: var(--color-text-secondary);
-  font-size: 1.15rem;        /* ✅ maior */
+  font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
@@ -29,7 +29,7 @@ ion-toolbar {
 .hero-title {
   margin: 0;
   color: var(--color-text-primary);
-  font-size: 1.55rem;        /* ✅ maior, ainda numa linha */
+  font-size: 1.55rem;
   line-height: 1.2;
   font-weight: 700;
   white-space: nowrap;

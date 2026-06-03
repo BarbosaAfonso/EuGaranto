@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.page.html',
   styleUrls: ['./forgot-password.page.scss'],
-  standalone: false, // ✅ Força o Angular a tratá-lo no formato tradicional
+  standalone: false,
 })
 export class ForgotPasswordPage implements OnInit {
   step: 1 | 2 = 1;

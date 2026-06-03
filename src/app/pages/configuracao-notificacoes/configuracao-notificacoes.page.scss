@@ -39,3 +39,19 @@ ion-label p {
   color: var(--color-text-secondary);
   font-size: 0.88rem;
 }
+
+
+:host-context(.ion-palette-dark) {
+  .settings-content {
+    --background: #121212;
+  }
+
+  ion-toolbar {
+    --background: #121212;
+  }
+
+  ion-item {
+    --background: #1e1e1e;
+    --border-color: #2a2a2a;
+  }
+}

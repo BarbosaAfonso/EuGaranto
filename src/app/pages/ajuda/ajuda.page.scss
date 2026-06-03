@@ -41,6 +41,28 @@ ion-accordion ion-item {
 
 .support-action ion-button {
   --border-radius: 14px;
+  --background: var(--color-primary);
   font-weight: 700;
   min-height: 48px;
+}
+
+
+:host-context(.ion-palette-dark) {
+  .help-content {
+    --background: #121212;
+  }
+
+  ion-toolbar {
+    --background: #121212;
+  }
+
+  .faq-group {
+    background: #1e1e1e;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  ion-accordion ion-item {
+    --background: #1e1e1e;
+    --border-color: #2a2a2a;
+  }
 }

@@ -5,7 +5,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { LoginPageRoutingModule } from './login-routing.module';
 import { LoginPage } from './login.page';
-import { ForgotPasswordPageModule } from '../forgot-password/forgot-password.module'; // ✅ Importar o módulo correto
+import { ForgotPasswordPageModule } from '../forgot-password/forgot-password.module'; // Importar o módulo correto
 
 @NgModule({
   imports: [

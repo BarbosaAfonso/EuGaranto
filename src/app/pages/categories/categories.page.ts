@@ -27,7 +27,7 @@ export class CategoriesPage implements OnInit, OnDestroy {
   constructor(
     private warrantyService: WarrantyService,
     private alertController: AlertController,
-    private router: Router, // ✅
+    private router: Router, 
   ) {}
 
   ngOnInit(): void {
@@ -71,7 +71,7 @@ export class CategoriesPage implements OnInit, OnDestroy {
     return this.expandedCategories.has(category);
   }
 
-  // ✅ Navega para o detalhe da garantia
+
   goToDetail(id: string): void {
     this.router.navigate(['/warranty-detail', id]);
   }

@@ -11,11 +11,10 @@ export class AppComponent implements OnInit {
 
   constructor(
     private warrantyService: WarrantyService,
-    private themeService: ThemeService // ✅
+    private themeService: ThemeService 
   ) {}
 
   async ngOnInit() {
-    // ✅ Aplica o tema guardado antes de qualquer coisa
     this.themeService.init();
 
     try {

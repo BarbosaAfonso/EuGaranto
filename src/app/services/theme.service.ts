@@ -15,7 +15,7 @@ export class ThemeService {
     return this.darkMode;
   }
 
-  // ✅ Define explicitamente o modo (claro/escuro)
+  // Define explicitamente o modo (claro/escuro)
   setDarkMode(enabled: boolean): void {
     this.darkMode = enabled;
     localStorage.setItem(this.STORAGE_KEY, String(enabled));

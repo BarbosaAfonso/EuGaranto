@@ -8,7 +8,7 @@ import { Alert, Category, Warranty, getWarrantyStatus } from '../models/models';
 export class WarrantyService {
   private readonly warrantiesStorageKey  = 'warranties';
   private readonly alertsStorageKey      = 'alerts';
-  private readonly categoriesStorageKey  = 'categories'; // ✅ novo
+  private readonly categoriesStorageKey  = 'categories'; 
   private warranties:  Warranty[]  = [];
   private categories:  Category[]  = [];
   private alerts:      Alert[]     = [];
@@ -45,7 +45,7 @@ export class WarrantyService {
       await this.storage.set(this.warrantiesStorageKey, warranties);
     }
 
-    // ✅ Usa categorias do storage se existirem, senão usa as do seed
+    // Usa categorias do storage se existirem, senão usa as do seed
     if (Array.isArray(storedCategories) && storedCategories.length > 0) {
       this.categories = storedCategories;
     } else {
@@ -130,13 +130,13 @@ export class WarrantyService {
     } else {
       this.categories.push(category);
     }
-    await this.persistCategories(); // ✅ persiste no storage
+    await this.persistCategories(); // persiste no storage
     this.categories$.next([...this.categories]);
   }
 
   async deleteCategory(id: string): Promise<void> {
     this.categories = this.categories.filter(category => category.id !== id);
-    await this.persistCategories(); // ✅ persiste no storage
+    await this.persistCategories(); // persiste no storage
     this.categories$.next([...this.categories]);
   }
 
@@ -269,7 +269,7 @@ export class WarrantyService {
     await this.storage.set(this.warrantiesStorageKey, this.warranties);
   }
 
-  // ✅ novo método de persistência
+  // novo método de persistência
   private async persistCategories(): Promise<void> {
     await this.storage.set(this.categoriesStorageKey, this.categories);
   }

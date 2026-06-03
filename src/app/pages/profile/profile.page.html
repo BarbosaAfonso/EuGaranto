@@ -29,7 +29,6 @@
       <ion-label>Ajuda</ion-label>
     </ion-item>
 
-    <!-- Toggle com ionChange -->
     <ion-item>
       <ion-icon slot="start"
                 [name]="isDarkMode ? 'moon-outline' : 'sunny-outline'"
@@ -52,7 +51,7 @@
     </ion-item>
   </ion-list>
 
-  <ion-modal [isOpen]="privacyModalOpen" (didDismiss)="closePrivacyModal()">
+  <ion-modal class="privacy-modal" [isOpen]="privacyModalOpen" (didDismiss)="closePrivacyModal()">
     <ng-template>
       <ion-header class="ion-no-border subprofile-header">
         <ion-toolbar>

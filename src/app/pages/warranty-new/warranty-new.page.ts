@@ -38,7 +38,7 @@ export class WarrantyNewPage implements OnInit {
       duration:        ['', Validators.required],
       category:        ['', Validators.required],
       compartment:     ['', Validators.required],
-      storageLocation: [''], // ✅ NOVO: Campo opcional (sem Validators.required)
+      storageLocation: [''],
     });
 
     this.loadListsData();
@@ -208,7 +208,7 @@ export class WarrantyNewPage implements OnInit {
       duration:        `${years} anos`,
       category:        warranty.category,
       compartment:     (warranty as any).compartment || '',
-      storageLocation: warranty.storageLocation || '', // ✅ Carrega o texto opcional ao editar
+      storageLocation: warranty.storageLocation || '', //Carrega o texto opcional ao editar
     });
 
     this.capturedImage = warranty.capturedImage;

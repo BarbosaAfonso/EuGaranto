@@ -40,7 +40,7 @@ export class AuthService {
     return true;
   }
 
-  // ✅ Guarda o utilizador atual no localStorage ao fazer login
+  // Guarda o utilizador atual no localStorage ao fazer login
   login(email: string, password: string): boolean {
     const users = this.getStorageUsers();
     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
@@ -51,13 +51,13 @@ export class AuthService {
     return false;
   }
 
-  // ✅ Devolve o utilizador atualmente autenticado
+  // Devolve o utilizador atualmente autenticado
   getCurrentUser(): any {
     const data = localStorage.getItem(this.CURRENT_USER_KEY);
     return data ? JSON.parse(data) : null;
   }
 
-  // ✅ Remove o utilizador atual ao fazer logout
+  // Remove o utilizador atual ao fazer logout
   logout(): void {
     localStorage.removeItem(this.CURRENT_USER_KEY);
   }

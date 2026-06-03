@@ -11,7 +11,6 @@
 
 @import "@ionic/angular/css/palettes/dark.class.css";
 
-/* ✅ html.ion-palette-dark tem mais especificidade que :root */
 html.ion-palette-dark {
   --color-primary:        #2D9251;
   --color-primary-light:  #1a2e1f;
@@ -32,7 +31,6 @@ html.ion-palette-dark {
   --ion-text-color:         #ffffff;
   --ion-border-color:       #2a2a2a;
 
-  /* ✅ Sobrepõe fundos hardcoded nos componentes */
   ion-content {
     --background: #121212;
   }
@@ -68,7 +66,6 @@ html.ion-palette-dark {
     --placeholder-color: #aaaaaa;
   }
 
-  /* ✅ ion-textarea adicionado aqui */
   ion-input,
   ion-textarea {
     --background: #2a2a2a;
@@ -85,7 +82,14 @@ html.ion-palette-dark {
     color: #ffffff;
   }
 
-  /* ✅ Card "Expira em Breve" em modo escuro */
+  ion-modal.privacy-modal {
+    --background: #121212;
+  }
+
+  ion-modal.privacy-modal ion-content {
+    --background: #121212 !important;
+  }
+
   .summary-card.warning {
     background: #3a2218 !important;
     --background: #3a2218;
@@ -96,7 +100,10 @@ html.ion-palette-dark {
   .detail-content,
   .profile-content,
   .categories-content,
-  .forgot-content {
+  .forgot-content,
+  .settings-content,
+  .help-content,
+  .privacy-modal-content {
     --background: #121212;
   }
 
@@ -123,41 +130,10 @@ html.ion-palette-dark {
   }
 }
 
-/* ✅ Letras verdes no menu do botão + (em ambos os modos) */
 .add-action-sheet .action-sheet-button {
   color: var(--color-primary) !important;
 
   .action-sheet-icon {
     color: var(--color-primary) !important;
-  }
-}
-
-.subprofile-header {
-  ion-toolbar {
-    --background: #f8f9fa;
-    --color: var(--color-text-primary);
-    position: relative;
-  }
-
-  ion-buttons[slot="start"] {
-    position: relative;
-    z-index: 2;
-  }
-
-  ion-back-button {
-    --color: #000000;
-    --icon-font-size: 24px;
-    --padding-start: 8px;
-    --padding-end: 8px;
-    min-width: 44px;
-  }
-
-  ion-title {
-    position: absolute;
-    inset: 0;
-    padding: 0 64px;
-    text-align: center;
-    font-weight: 700;
-    pointer-events: none;
   }
 }
