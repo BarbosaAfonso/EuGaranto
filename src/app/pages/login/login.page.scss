@@ -36,7 +36,7 @@ ion-content {
     display: flex;
     justify-content: center;
     gap: 8px;
-    
+
     .pill {
       background: #e8f5e9;
       color: #0A7A3E;
@@ -119,6 +119,48 @@ ion-content {
     .register-link {
       color: #0A7A3E;
       font-weight: 700;
+    }
+  }
+}
+
+/* ✅ MODO ESCURO */
+:host-context(.ion-palette-dark) {
+  ion-content {
+    --background: #121212;
+  }
+
+  .logo-area {
+    .app-title { color: #3aad63; }
+    .app-subtitle { color: #aaaaaa; }
+    .feature-pills .pill {
+      background: #1a2e1f;
+      color: #3aad63;
+    }
+  }
+
+  .form-card {
+    background: #1e1e1e;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+    h2 { color: #ffffff; }
+
+    .custom-input {
+      --background: #2a2a2a;
+      --color: #ffffff;
+      --placeholder-color: #888888;
+      --border-color: #3a3a3a;
+    }
+
+    .forgot-row .forgot-link { color: #3aad63; }
+
+    .error-message {
+      color: #ff8a80;
+      background: #3a1f1f;
+    }
+
+    .register-text {
+      color: #aaaaaa;
+      .register-link { color: #3aad63; }
     }
   }
 }

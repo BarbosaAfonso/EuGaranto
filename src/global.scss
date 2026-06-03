@@ -1,37 +1,133 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+@import "@ionic/angular/css/palettes/dark.class.css";
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* ✅ html.ion-palette-dark tem mais especificidade que :root */
+html.ion-palette-dark {
+  --color-primary:        #2D9251;
+  --color-primary-light:  #1a2e1f;
+  --color-primary-mid:    #3aad63;
+  --color-accent-orange:  #ff7043;
+  --color-accent-red:     #ef5350;
+  --color-bg:             #121212;
+  --color-surface:        #1e1e1e;
+  --color-text-primary:   #ffffff;
+  --color-text-secondary: #aaaaaa;
+  --color-border:         #2a2a2a;
+
+  --ion-background-color:   #121212;
+  --ion-item-background:    #1e1e1e;
+  --ion-card-background:    #1e1e1e;
+  --ion-toolbar-background: #1e1e1e;
+  --ion-tab-bar-background: #1e1e1e;
+  --ion-text-color:         #ffffff;
+  --ion-border-color:       #2a2a2a;
+
+  /* ✅ Sobrepõe fundos hardcoded nos componentes */
+  ion-content {
+    --background: #121212;
+  }
+
+  ion-card {
+    --background: #1e1e1e;
+    color: #ffffff;
+  }
+
+  ion-item {
+    --background: #1e1e1e;
+    --color: #ffffff;
+    --border-color: #2a2a2a;
+  }
+
+  ion-toolbar {
+    --background: #1e1e1e;
+    --color: #ffffff;
+  }
+
+  ion-tab-bar {
+    --background: #1e1e1e;
+    --color: #aaaaaa;
+  }
+
+  ion-list {
+    background: #1e1e1e;
+  }
+
+  ion-searchbar {
+    --background: #2a2a2a;
+    --color: #ffffff;
+    --placeholder-color: #aaaaaa;
+  }
+
+  /* ✅ ion-textarea adicionado aqui */
+  ion-input,
+  ion-textarea {
+    --background: #2a2a2a;
+    --color: #ffffff;
+    --placeholder-color: #aaaaaa;
+  }
+
+  ion-select {
+    --background: #2a2a2a;
+    --color: #ffffff;
+  }
+
+  ion-badge {
+    color: #ffffff;
+  }
+
+  /* ✅ Card "Expira em Breve" em modo escuro */
+  .summary-card.warning {
+    background: #3a2218 !important;
+    --background: #3a2218;
+  }
+
+  .login-content,
+  .home-content,
+  .detail-content,
+  .profile-content,
+  .categories-content,
+  .forgot-content {
+    --background: #121212;
+  }
+
+  .form-card,
+  .info-card ion-card-content,
+  .ocr-card {
+    background: #1e1e1e !important;
+    color: #ffffff;
+  }
+
+  h1, h2, h3, p, span, label {
+    color: #ffffff;
+  }
+
+  .info-label {
+    color: #aaaaaa !important;
+  }
+
+  .info-value,
+  .app-subtitle,
+  .hero-subtitle,
+  .hero-title {
+    color: #ffffff !important;
+  }
+}
+
+/* ✅ Letras verdes no menu do botão + (em ambos os modos) */
+.add-action-sheet .action-sheet-button {
+  color: var(--color-primary) !important;
+
+  .action-sheet-icon {
+    color: var(--color-primary) !important;
+  }
+}

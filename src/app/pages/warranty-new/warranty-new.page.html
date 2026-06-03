@@ -79,6 +79,7 @@
           </ion-select-option>
         </ion-select>
 
+        <!-- ✅ Removido o style inline com cores fixas -->
         <ion-textarea
           formControlName="storageLocation"
           label="Onde guardou o papel físico? (Opcional)"
@@ -87,13 +88,7 @@
           placeholder="Ex: Armário do corredor, gaveta de baixo..."
           [autoGrow]="true"
           rows="3"
-          style="--background: #000000; 
-                 --color: #ffffff; 
-                 --border-radius: 14px; 
-                 --padding-start: 16px; 
-                 --padding-end: 16px; 
-                 --padding-top: 4px; 
-                 --padding-bottom: 16px;">
+          class="storage-textarea">
         </ion-textarea>
 
         <ion-button type="submit" expand="block" color="success" [disabled]="warrantyForm.invalid">

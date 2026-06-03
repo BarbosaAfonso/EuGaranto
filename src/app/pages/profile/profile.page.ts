@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   standalone: false,
@@ -13,6 +14,7 @@ export class ProfilePage {
   userName = '';
   userEmail = '';
   userInitials = '';
+  isDarkMode = false;
   privacyModalOpen = false;
   passwordForm: FormGroup;
   passwordMessage = '';
@@ -21,6 +23,9 @@ export class ProfilePage {
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private authService: AuthService,
+    private themeService: ThemeService
+  ) {}
     private authService: AuthService
   ) {
     this.passwordForm = this.fb.group({
@@ -47,6 +52,15 @@ export class ProfilePage {
         .toUpperCase()
         .slice(0, 2);
     }
+
+    this.isDarkMode = this.themeService.isDarkMode();
+  }
+
+  // ✅ Recebe o evento do toggle e aplica o modo
+  onThemeChange(event: any): void {
+    const enabled = event.detail.checked;
+    this.themeService.setDarkMode(enabled);
+    this.isDarkMode = enabled;
   }
 
   goToNotifications() {

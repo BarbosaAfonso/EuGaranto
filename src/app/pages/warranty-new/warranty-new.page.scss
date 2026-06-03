@@ -102,8 +102,10 @@ ion-content {
   gap: 16px;
 }
 
+/* ✅ ion-textarea adicionado à mesma regra dos inputs/selects */
 .warranty-form ion-input,
-.warranty-form ion-select {
+.warranty-form ion-select,
+.warranty-form ion-textarea {
   --background: var(--ion-background-color);
   --border-color: var(--warranty-border);
   --border-radius: 18px;

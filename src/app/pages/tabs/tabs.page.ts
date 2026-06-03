@@ -15,14 +15,11 @@ export class TabsPage {
     private actionSheet: ActionSheetController,
   ) {}
 
-  /**
-   * CORREÇÃO HEURÍSTICA #2: o botão "+" mostra opções claras
-   * em vez de criar algo indeterminado.
-   */
   async openAdd(e: Event) {
     e.stopPropagation();
     const sheet = await this.actionSheet.create({
       header: 'O que pretende adicionar?',
+      cssClass: 'add-action-sheet', // ✅ classe para estilizar
       buttons: [
         {
           text: 'Nova Garantia',
