@@ -5,10 +5,16 @@
 </ion-header>
 
 <ion-content class="alerts-content">
-  <ng-container *ngIf="alertWarranties.length > 0; else emptyState">
+  <ion-searchbar
+    placeholder="Pesquisar por aparelho..."
+    debounce="250"
+    (ionInput)="pesquisarAlertas($event)"
+  ></ion-searchbar>
+
+  <ng-container *ngIf="alertasFiltrados.length > 0; else emptyState">
     <ion-list class="alerts-list" lines="none">
       <ion-item
-        *ngFor="let item of alertWarranties; trackBy: trackByWarranty"
+        *ngFor="let item of alertasFiltrados; trackBy: trackByWarranty"
         class="alert-item"
       >
         <ion-icon
@@ -22,6 +28,7 @@
           <h2>{{ getTitle(item.warranty) }}</h2>
           <ion-note>{{ item.warranty.category }}</ion-note>
           <p>Expira em {{ formatDate(item.warranty.endDate) }}</p>
+          <p>{{ item.alert.message }}</p>
         </ion-label>
 
         <ion-badge slot="end" [color]="getBadgeColor(item.daysRemaining)">
@@ -35,7 +42,7 @@
     <div class="empty-state">
       <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
       <p>Tudo sob controlo!</p>
-      <small>Nenhuma garantia expira nos próximos 30 dias.</small>
+      <small>Nenhum alerta encontrado.</small>
     </div>
   </ng-template>
 </ion-content>
