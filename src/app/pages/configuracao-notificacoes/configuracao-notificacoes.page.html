@@ -1,0 +1,25 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notificações</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="settings-content">
+  <ion-list inset="true" class="settings-list">
+    <ion-item *ngFor="let setting of settings">
+      <ion-label>
+        <h2>{{ setting.label }}</h2>
+        <p>{{ setting.description }}</p>
+      </ion-label>
+      <ion-toggle
+        slot="end"
+        color="success"
+        [checked]="values[setting.key]"
+        (ionChange)="updateSetting(setting.key, $event.detail.checked)">
+      </ion-toggle>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,46 @@
+.help-content {
+  --background: #f8f9fa;
+}
+
+ion-toolbar {
+  --background: #f8f9fa;
+  --color: var(--color-text-primary);
+}
+
+ion-title {
+  text-align: center;
+  font-weight: 700;
+}
+
+.faq-group {
+  display: block;
+  margin: 20px 16px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+ion-accordion ion-item {
+  --background: #ffffff;
+  --border-color: #edf1ed;
+  --color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.faq-answer {
+  padding: 4px 18px 18px;
+  color: var(--color-text-secondary);
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.support-action {
+  padding: 0 16px 24px;
+}
+
+.support-action ion-button {
+  --border-radius: 14px;
+  font-weight: 700;
+  min-height: 48px;
+}

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
@@ -14,12 +15,30 @@ export class ProfilePage {
   userEmail = '';
   userInitials = '';
   isDarkMode = false;
+  privacyModalOpen = false;
+  passwordForm: FormGroup;
+  passwordMessage = '';
+  passwordError = '';
 
   constructor(
+    private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
     private themeService: ThemeService
   ) {}
+    private authService: AuthService
+  ) {
+    this.passwordForm = this.fb.group({
+      oldPassword: ['', [Validators.required, Validators.minLength(6)]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+    });
+
+    this.passwordForm.valueChanges.subscribe(() => {
+      this.passwordMessage = '';
+      this.passwordError = '';
+    });
+  }
 
   ionViewWillEnter() {
     const user = this.authService.getCurrentUser();
@@ -42,6 +61,49 @@ export class ProfilePage {
     const enabled = event.detail.checked;
     this.themeService.setDarkMode(enabled);
     this.isDarkMode = enabled;
+  }
+
+  goToNotifications() {
+    this.router.navigate(['/configuracao-notificacoes']);
+  }
+
+  goToHelp() {
+    this.router.navigate(['/ajuda']);
+  }
+
+  openPrivacyModal() {
+    this.privacyModalOpen = true;
+  }
+
+  closePrivacyModal() {
+    this.privacyModalOpen = false;
+    this.passwordForm.reset();
+    this.passwordMessage = '';
+    this.passwordError = '';
+  }
+
+  changePassword() {
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const user = this.authService.getCurrentUser();
+    const { oldPassword, newPassword, confirmPassword } = this.passwordForm.value;
+
+    if (!user || user.password !== oldPassword) {
+      this.passwordError = 'A palavra-passe antiga nao esta correta.';
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      this.passwordError = 'A nova palavra-passe e a confirmacao nao coincidem.';
+      return;
+    }
+
+    this.authService.updatePassword(user.email, newPassword);
+    this.passwordMessage = 'Palavra-passe alterada com sucesso.';
+    this.passwordForm.reset();
   }
 
   logout() {

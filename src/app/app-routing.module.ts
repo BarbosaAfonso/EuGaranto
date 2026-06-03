@@ -34,6 +34,14 @@ const routes: Routes = [
     path: 'forgot-password',
     loadChildren: () => import('./pages/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
   },
+  {
+    path: 'configuracao-notificacoes',
+    loadChildren: () => import('./pages/configuracao-notificacoes/configuracao-notificacoes.module').then(m => m.ConfiguracaoNotificacoesPageModule)
+  },
+  {
+    path: 'ajuda',
+    loadChildren: () => import('./pages/ajuda/ajuda.module').then(m => m.AjudaPageModule)
+  },
 
 ];
 

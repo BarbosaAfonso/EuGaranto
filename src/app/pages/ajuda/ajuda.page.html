@@ -1,0 +1,29 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ajuda</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="help-content">
+  <ion-accordion-group class="faq-group">
+    <ion-accordion *ngFor="let faq of faqs; let index = index" [value]="'faq-' + index">
+      <ion-item slot="header">
+        <ion-label>{{ faq.question }}</ion-label>
+      </ion-item>
+
+      <div class="faq-answer" slot="content">
+        {{ faq.answer }}
+      </div>
+    </ion-accordion>
+  </ion-accordion-group>
+
+  <div class="support-action">
+    <ion-button expand="block" href="mailto:suporte@eugaranto.pt">
+      <ion-icon slot="start" name="mail-outline"></ion-icon>
+      Contactar Suporte
+    </ion-button>
+  </div>
+</ion-content>

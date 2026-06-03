@@ -69,6 +69,10 @@ export class AuthService {
     if (index !== -1) {
       users[index].password = newPassword;
       this.saveStorageUsers(users);
+      const currentUser = this.getCurrentUser();
+      if (currentUser?.email?.toLowerCase() === email.toLowerCase()) {
+        localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(users[index]));
+      }
       return true;
     }
     return false;
