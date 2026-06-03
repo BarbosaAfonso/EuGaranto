@@ -1,3 +1,7 @@
+:host {
+  font-family: 'Poppins', sans-serif;
+}
+
 .home-content {
   --background: var(--color-bg);
 }
@@ -5,8 +9,8 @@
 ion-toolbar {
   --background: transparent;
   --padding-top: 20px;
-  --padding-start: 20px;
-  --padding-end: 20px;
+  --padding-start: 16px;     /* ✅ menos padding lateral → mais espaço para o texto */
+  --padding-end: 16px;
   --padding-bottom: 4px;
 }
 
@@ -17,18 +21,18 @@ ion-toolbar {
 .hero-subtitle {
   margin: 0 0 8px;
   color: var(--color-text-secondary);
-  font-size: 0.8rem;
+  font-size: 1.15rem;        /* ✅ maior */
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
 }
 
 .hero-title {
   margin: 0;
-  max-width: 14ch;
   color: var(--color-text-primary);
-  font-size: 2rem;
-  line-height: 1.1;
-  font-weight: 800;
+  font-size: 1.55rem;        /* ✅ maior, ainda numa linha */
+  line-height: 1.2;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .searchbar-shell {
@@ -62,7 +66,6 @@ ion-searchbar {
   }
 }
 
-/* ✅ Fundo de aviso (laranja/vermelho claro) */
 .summary-card.warning {
   background: #fff3ec;
   --background: #fff3ec;
@@ -71,7 +74,7 @@ ion-searchbar {
 .summary-value {
   display: block;
   color: var(--color-primary);
-  font-size: 2rem;
+  font-size: 2.1rem;
   font-weight: 800;
   line-height: 1;
 }
@@ -81,10 +84,10 @@ ion-searchbar {
 }
 
 .summary-label {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
   color: var(--color-text-secondary);
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .warranty-section {
@@ -94,9 +97,9 @@ ion-searchbar {
 .section-heading {
   margin-bottom: 10px;
   color: var(--color-text-secondary);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
 }
 
 ion-list {
@@ -132,8 +135,8 @@ ion-item {
 ion-label h2 {
   margin: 0 0 6px;
   color: var(--color-text-primary);
-  font-size: 0.98rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 ion-label p {
@@ -145,5 +148,14 @@ ion-label p {
 ion-badge {
   border-radius: 999px;
   padding: 8px 10px;
+  font-size: 0.7rem;
   font-weight: 700;
+}
+
+:host-context(.ion-palette-dark) {
+  ion-header,
+  ion-toolbar {
+    --background: #121212;
+    background: #121212;
+  }
 }
