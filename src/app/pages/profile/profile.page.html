@@ -28,6 +28,21 @@
       <ion-icon slot="start" name="help-circle-outline" color="success"></ion-icon>
       <ion-label>Ajuda</ion-label>
     </ion-item>
+
+    <!-- ✅ Toggle com ionChange -->
+    <ion-item>
+      <ion-icon slot="start"
+                [name]="isDarkMode ? 'moon-outline' : 'sunny-outline'"
+                color="success">
+      </ion-icon>
+      <ion-label>{{ isDarkMode ? 'Modo Escuro' : 'Modo Claro' }}</ion-label>
+      <ion-toggle
+        slot="end"
+        color="success"
+        [checked]="isDarkMode"
+        (ionChange)="onThemeChange($event)">
+      </ion-toggle>
+    </ion-item>
   </ion-list>
 
   <ion-list inset="true" class="logout-list">

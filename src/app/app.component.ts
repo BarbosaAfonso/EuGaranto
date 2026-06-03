@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WarrantyService } from './services/warranty.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   standalone: false,
@@ -8,19 +9,22 @@ import { WarrantyService } from './services/warranty.service';
 })
 export class AppComponent implements OnInit {
 
-  constructor(private warrantyService: WarrantyService) {}
+  constructor(
+    private warrantyService: WarrantyService,
+    private themeService: ThemeService // ✅
+  ) {}
 
   async ngOnInit() {
-    // Req. 12 — Bloquear landscape com Capacitor
+    // ✅ Aplica o tema guardado antes de qualquer coisa
+    this.themeService.init();
+
     try {
       const { ScreenOrientation } = await import('@capacitor/screen-orientation');
       await ScreenOrientation.lock({ orientation: 'portrait' });
     } catch (e) {
-      // Não disponível no browser, apenas no dispositivo físico
       console.log('ScreenOrientation apenas disponível em dispositivo físico.');
     }
 
-    // Inicializar serviço de dados (carrega JSON + Ionic Storage)
     await this.warrantyService.init();
   }
 }

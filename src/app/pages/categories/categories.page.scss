@@ -28,6 +28,18 @@ ion-list,
   font-weight: 800;
   margin-top: 16px;
   margin-bottom: 8px;
+  cursor: pointer;
+
+  .category-count {
+    font-weight: 400;
+    color: #888888;
+    margin-left: 4px;
+  }
+
+  .chevron-icon {
+    color: #888888;
+    font-size: 16px;
+  }
 }
 
 .warranty-item {
@@ -59,20 +71,6 @@ ion-checkbox {
   --checkbox-background-checked: #0a7a3e;
   --border-color-checked: #0a7a3e;
   margin-inline-end: 14px;
-
-  .category-header {
-  cursor: pointer;
-
-  .category-count {
-    font-weight: 400;
-    color: #888888;
-    margin-left: 4px;
-  }
-
-  .chevron-icon {
-    color: #888888;
-    font-size: 16px;
-  }
 }
 
 .empty-category-item {
@@ -82,4 +80,32 @@ ion-checkbox {
     font-size: 13px;
   }
 }
+
+/* ✅ MODO ESCURO */
+:host-context(.ion-palette-dark) {
+  .categories-content,
+  ion-content {
+    --background: #121212;
+  }
+
+  .category-header {
+    --color: #3aad63;
+
+    .category-count { color: #aaaaaa; }
+    .chevron-icon { color: #aaaaaa; }
+  }
+
+  .warranty-item {
+    --background: #1e1e1e;
+    --color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .warranty-item ion-label h2 {
+    color: #ffffff;
+  }
+
+  .warranty-item ion-label p {
+    color: #aaaaaa;
+  }
 }
