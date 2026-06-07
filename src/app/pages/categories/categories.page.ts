@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { Warranty, getWarrantyTitle } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
 
@@ -27,11 +27,14 @@ export class CategoriesPage implements OnInit, OnDestroy {
   constructor(
     private warrantyService: WarrantyService,
     private alertController: AlertController,
-    private router: Router, 
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.sub = this.warrantyService.warranties$.subscribe(warranties => {
+    this.sub = combineLatest([
+      this.warrantyService.warranties$,
+      this.warrantyService.categories$,
+    ]).subscribe(([warranties]) => {
       this.groupWarrantiesByCategory(warranties);
       this.selectedIds = this.selectedIds.filter(id => warranties.some(w => w.id === id));
     });
@@ -39,6 +42,7 @@ export class CategoriesPage implements OnInit, OnDestroy {
 
   ionViewWillEnter(): void {
     this.warrantyService.warranties$.next(this.warrantyService.getWarranties());
+    this.warrantyService.categories$.next(this.warrantyService.getCategories());
   }
 
   ngOnDestroy(): void {
@@ -70,7 +74,6 @@ export class CategoriesPage implements OnInit, OnDestroy {
   isExpanded(category: string): boolean {
     return this.expandedCategories.has(category);
   }
-
 
   goToDetail(id: string): void {
     this.router.navigate(['/warranty-detail', id]);

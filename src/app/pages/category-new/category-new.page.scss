@@ -13,7 +13,7 @@
 }
 
 .input-wrapper {
-  background: #fff;
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 12px;
   overflow: hidden;
@@ -25,9 +25,9 @@
   }
 
   ion-input {
-    --background: #fff;
-    --color: var(--color-text);
-    --placeholder-color: #b6bdc6;
+    --background: var(--color-surface);
+    --color: var(--color-text-primary);
+    --placeholder-color: var(--color-text-secondary);
     --placeholder-opacity: 1;
     --padding-start: 16px;
     --padding-end: 12px;
@@ -36,7 +36,6 @@
   }
 }
 
-/* ── Ícones ── */
 .icon-grid {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
   .icon-opt {
@@ -49,7 +48,6 @@
   }
 }
 
-/* ── Cores ── */
 .colors-row {
   display: flex; gap: 12px; flex-wrap: wrap;
   .color-dot {
@@ -62,7 +60,6 @@
   }
 }
 
-/* ── Prévia ── */
 .preview-card {
   background: var(--color-surface); border-radius: 14px; padding: 16px;
   display: flex; justify-content: space-between; align-items: center;
@@ -70,7 +67,8 @@
 
   .preview-status { font-size: 10px; font-weight: 700; color: var(--color-primary);
     display: block; margin-bottom: 4px; }
-  .preview-name   { font-size: 17px; font-weight: 700; display: block; margin-bottom: 2px; }
+  .preview-name   { font-size: 17px; font-weight: 700; display: block; margin-bottom: 2px;
+    color: var(--color-text-primary); }
   .preview-count  { font-size: 12px; color: var(--color-text-secondary); }
 
   .preview-icon {
