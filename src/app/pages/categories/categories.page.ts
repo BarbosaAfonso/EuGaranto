@@ -17,10 +17,34 @@ interface WarrantyGroup {
   styleUrls: ['./categories.page.scss'],
 })
 export class CategoriesPage implements OnInit, OnDestroy {
-  availableCategories = ['Sala de Estar', 'Cozinha', 'Quarto', 'Escritório', 'Outros'];
+  availableCategories = [
+    'Eletrodomésticos',
+    'Ferramentas',
+    'Imagem e Som',
+    'Informática',
+    'Telemóveis',
+    'Outros',
+  ];
   groupedWarranties: WarrantyGroup[] = [];
   selectedIds: string[] = [];
   expandedCategories: Set<string> = new Set();
+
+  private readonly compartmentKeywords = [
+    'Cozinha', 'Escritório', 'Quarto', 'Sala de Estar',
+    'Casa de Banho', 'Garagem', 'Arrecadação', 'Lavandaria', 'Marquise',
+  ];
+
+  private readonly categoryAliases: { [key: string]: string } = {
+    'eletrodomesticos': 'Eletrodomésticos',
+    'grandes eletrodomesticos': 'Eletrodomésticos',
+    'pequenos eletrodomesticos': 'Eletrodomésticos',
+    'informatica': 'Informática',
+    'informatica & pc': 'Informática',
+    'telemoveis': 'Telemóveis',
+    'imagem e som': 'Imagem e Som',
+    'ferramentas': 'Ferramentas',
+    'outros': 'Outros',
+  };
 
   private sub?: Subscription;
 
@@ -119,14 +143,34 @@ export class CategoriesPage implements OnInit, OnDestroy {
     this.selectedIds = [];
   }
 
+  private isCompartment(name: string): boolean {
+    return this.compartmentKeywords.some(room => name.toLowerCase().includes(room.toLowerCase()));
+  }
+
+  private normalizeCategory(category?: string): string {
+    const raw = category?.trim();
+    if (!raw) return 'Outros';
+
+    const key = raw
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    return this.categoryAliases[key] ?? raw;
+  }
+
   private groupWarrantiesByCategory(warranties: Warranty[]): void {
-    const serviceCategories = this.warrantyService.getCategories().map(c => c.name);
-    const warrantyCategories = warranties.map(w => this.normalizeCategory(w.category));
-    const categories = [...new Set([...this.availableCategories, ...serviceCategories, ...warrantyCategories])];
+    const allNames = [
+      ...this.availableCategories,
+      ...this.warrantyService.getCategories().map(c => c.name),
+      ...warranties.map(w => w.category ?? ''),
+    ].map(name => this.normalizeCategory(name));
+
+    const categories = [...new Set(allNames)]
+      .filter(name => !this.isCompartment(name));
 
     categories.sort((a, b) => a.localeCompare(b, 'pt'));
 
-    this.availableCategories = categories;
     this.groupedWarranties = categories.map(category => ({
       category,
       items: warranties.filter(w => this.normalizeCategory(w.category) === category),
@@ -137,9 +181,5 @@ export class CategoriesPage implements OnInit, OnDestroy {
         this.expandedCategories.add(group.category);
       }
     });
-  }
-
-  private normalizeCategory(category?: string): string {
-    return category?.trim() || 'Outros';
   }
 }
