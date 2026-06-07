@@ -16,8 +16,7 @@ export class WarrantyNewPage implements OnInit {
   capturedImage: string | undefined;
   warrantyForm!: FormGroup;
   categories: Category[] = [];
-  
-  // Listas limpas finais
+
   allCategoryNames: string[] = [];
   allCompartmentNames: string[] = [];
 
@@ -58,18 +57,18 @@ export class WarrantyNewPage implements OnInit {
     this.categories = this.warrantyService.getCategories();
 
     const defaultProductCats = [
-      'Telemóveis', 
-      'Informática & PC', 
-      'Grandes Eletrodomésticos', 
-      'Pequenos Eletrodomésticos', 
-      'Imagem e Som', 
-      'Ferramentas', 
-      'Outros'
+      'Telemóveis',
+      'Informática & PC',
+      'Grandes Eletrodomésticos',
+      'Pequenos Eletrodomésticos',
+      'Imagem e Som',
+      'Ferramentas',
+      'Outros',
     ];
 
     const compartmentKeywords = [
-      'Cozinha', 'Escritório', 'Quarto', 'Sala de Estar', 
-      'Casa de Banho', 'Garagem', 'Arrecadação', 'Lavandaria', 'Lavandaria / Marquise'
+      'Cozinha', 'Escritório', 'Quarto', 'Sala de Estar',
+      'Casa de Banho', 'Garagem', 'Arrecadação', 'Lavandaria', 'Lavandaria / Marquise',
     ];
 
     const normalizeCategory = (name: string): string => {
@@ -89,14 +88,14 @@ export class WarrantyNewPage implements OnInit {
       .sort((a, b) => a.localeCompare(b, 'pt'));
 
     const defaultCompartments = [
-      'Cozinha', 
+      'Cozinha',
       'Sala de Estar',
-      'Quarto', 
-      'Escritório', 
-      'Casa de Banho', 
-      'Lavandaria', 
-      'Garagem / Arrecadação', 
-      'Outros'
+      'Quarto',
+      'Escritório',
+      'Casa de Banho',
+      'Lavandaria',
+      'Garagem / Arrecadação',
+      'Outros',
     ];
 
     const historicalCompartments = this.warrantyService.getWarranties()
@@ -119,6 +118,10 @@ export class WarrantyNewPage implements OnInit {
       allowEditing: false,
       resultType: CameraResultType.DataUrl,
       source: CameraSource.Prompt,
+      promptLabelHeader: 'Foto',
+      promptLabelPhoto: 'Escolher da Galeria',
+      promptLabelPicture: 'Tirar Foto',
+      promptLabelCancel: 'Cancelar',
     });
 
     if (!result.dataUrl) return;
@@ -131,7 +134,7 @@ export class WarrantyNewPage implements OnInit {
         productName:  'Smart TV Samsung',
         purchaseDate: new Date().toISOString().split('T')[0],
         duration:     '3 anos',
-        category:     'Imagem e Som', 
+        category:     'Imagem e Som',
         compartment:  'Sala de Estar',
       });
     }
@@ -148,7 +151,6 @@ export class WarrantyNewPage implements OnInit {
     const expiryDate = this.warrantyService.calcExpiryDate(formValue.purchaseDate, warrantyMonths);
     const selectedCategory = this.categories.find(c => c.name === formValue.category);
 
-    // Se preencher a arrumação, damos um título automático para ativar o card de detalhes
     const storageLabelValue = formValue.storageLocation?.trim() ? 'Localização Física' : undefined;
 
     if (this.isEditMode && this.editingWarrantyId) {
@@ -208,7 +210,7 @@ export class WarrantyNewPage implements OnInit {
       duration:        `${years} anos`,
       category:        warranty.category,
       compartment:     (warranty as any).compartment || '',
-      storageLocation: warranty.storageLocation || '', //Carrega o texto opcional ao editar
+      storageLocation: warranty.storageLocation || '',
     });
 
     this.capturedImage = warranty.capturedImage;
