@@ -23,6 +23,13 @@ export class WarrantyNewPage implements OnInit {
   isEditMode = false;
   editingWarrantyId: string | null = null;
 
+  selectorOpen = false;
+  selectorTitle = '';
+  selectorOptions: string[] = [];
+  selectorFiltered: string[] = [];
+  selectorSearch = '';
+  selectorTarget: 'category' | 'compartment' | null = null;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -51,6 +58,44 @@ export class WarrantyNewPage implements OnInit {
 
   ionViewWillEnter(): void {
     this.loadListsData();
+  }
+
+  openSelector(target: 'category' | 'compartment'): void {
+    this.selectorTarget = target;
+    this.selectorSearch = '';
+
+    if (target === 'category') {
+      this.selectorTitle = 'Categoria do Produto';
+      this.selectorOptions = this.allCategoryNames;
+    } else {
+      this.selectorTitle = 'Compartimento da Casa';
+      this.selectorOptions = this.allCompartmentNames;
+    }
+
+    this.selectorFiltered = [...this.selectorOptions];
+    this.selectorOpen = true;
+  }
+
+  filterSelector(event: any): void {
+    const term = (event.detail.value || '').toLowerCase().trim();
+    this.selectorSearch = event.detail.value || '';
+    this.selectorFiltered = this.selectorOptions.filter(o => o.toLowerCase().includes(term));
+  }
+
+  isCurrentSelection(opt: string): boolean {
+    if (!this.selectorTarget) return false;
+    return this.warrantyForm.get(this.selectorTarget)?.value === opt;
+  }
+
+  chooseOption(opt: string): void {
+    if (this.selectorTarget) {
+      this.warrantyForm.patchValue({ [this.selectorTarget]: opt });
+    }
+    this.closeSelector();
+  }
+
+  closeSelector(): void {
+    this.selectorOpen = false;
   }
 
   private loadListsData(): void {

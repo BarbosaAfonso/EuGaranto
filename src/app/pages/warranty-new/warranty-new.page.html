@@ -55,29 +55,21 @@
           placeholder="Ex: 3 anos">
         </ion-input>
 
-        <ion-select
-          formControlName="category"
-          label="Categoria do Produto"
-          labelPlacement="stacked"
-          fill="outline"
-          interface="alert"
-          placeholder="Selecionar categoria do objeto">
-          <ion-select-option *ngFor="let name of allCategoryNames" [value]="name">
-            {{ name }}
-          </ion-select-option>
-        </ion-select>
+        <div class="select-field" (click)="openSelector('category')">
+          <span class="select-label">CATEGORIA DO PRODUTO</span>
+          <span class="select-value" [class.placeholder]="!warrantyForm.value.category">
+            {{ warrantyForm.value.category || 'Selecionar categoria do objeto' }}
+          </span>
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </div>
 
-        <ion-select
-          formControlName="compartment"
-          label="Compartimento da Casa"
-          labelPlacement="stacked"
-          fill="outline"
-          interface="alert"
-          placeholder="Em que divisão fica guardado?">
-          <ion-select-option *ngFor="let comp of allCompartmentNames" [value]="comp">
-            {{ comp }}
-          </ion-select-option>
-        </ion-select>
+        <div class="select-field" (click)="openSelector('compartment')">
+          <span class="select-label">COMPARTIMENTO DA CASA</span>
+          <span class="select-value" [class.placeholder]="!warrantyForm.value.compartment">
+            {{ warrantyForm.value.compartment || 'Em que divisão fica guardado?' }}
+          </span>
+          <ion-icon name="chevron-down-outline"></ion-icon>
+        </div>
 
         <ion-textarea
           formControlName="storageLocation"
@@ -96,4 +88,37 @@
       </form>
     </div>
   </div>
+
+  <ion-modal class="selector-modal" [isOpen]="selectorOpen" (didDismiss)="closeSelector()">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="closeSelector()">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>{{ selectorTitle }}</ion-title>
+        </ion-toolbar>
+        <ion-toolbar>
+          <ion-searchbar
+            placeholder="Pesquisar..."
+            [value]="selectorSearch"
+            (ionInput)="filterSelector($event)">
+          </ion-searchbar>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-list>
+          <ion-item button *ngFor="let opt of selectorFiltered" (click)="chooseOption(opt)">
+            <ion-label>{{ opt }}</ion-label>
+            <ion-icon *ngIf="isCurrentSelection(opt)" name="checkmark-outline" slot="end" color="success"></ion-icon>
+          </ion-item>
+
+          <ion-item *ngIf="selectorFiltered.length === 0" lines="none">
+            <ion-label class="no-results">Sem resultados para "{{ selectorSearch }}"</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>

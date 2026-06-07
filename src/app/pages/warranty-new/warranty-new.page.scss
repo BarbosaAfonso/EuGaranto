@@ -113,9 +113,52 @@ ion-content {
   --padding-end: 14px;
 }
 
+.warranty-form .select-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  background: var(--ion-background-color);
+  border: 1px solid var(--warranty-border);
+  border-radius: 18px;
+  padding: 24px 14px 10px;
+  min-height: 56px;
+  cursor: pointer;
+
+  .select-label {
+    position: absolute;
+    top: 9px;
+    left: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: var(--ion-color-medium);
+  }
+
+  .select-value {
+    flex: 1;
+    font-size: 15px;
+    color: var(--ion-text-color);
+
+    &.placeholder {
+      color: var(--ion-color-medium);
+    }
+  }
+
+  ion-icon {
+    color: var(--ion-color-medium);
+    font-size: 18px;
+  }
+}
+
 .warranty-form ion-button {
   margin-top: 8px;
   --border-radius: 18px;
   min-height: 52px;
   font-weight: 700;
+}
+
+.no-results {
+  color: var(--ion-color-medium);
+  font-style: italic;
 }

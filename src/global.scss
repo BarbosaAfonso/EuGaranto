@@ -137,3 +137,11 @@ html.ion-palette-dark {
     color: var(--color-primary) !important;
   }
 }
+
+.theme-select-alert {
+  --ion-color-primary: var(--color-primary);
+}
+
+.theme-select-alert .alert-button {
+  color: var(--color-primary) !important;
+}
