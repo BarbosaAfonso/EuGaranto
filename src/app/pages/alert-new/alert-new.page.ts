@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 import { Alert, Warranty, getWarrantyDate, getWarrantyTitle } from '../../models/models';
 import { WarrantyService } from '../../services/warranty.service';
 
@@ -10,7 +11,7 @@ import { WarrantyService } from '../../services/warranty.service';
   templateUrl: './alert-new.page.html',
   styleUrls: ['./alert-new.page.scss'],
 })
-export class AlertNewPage implements OnInit {
+export class AlertNewPage implements OnInit, OnDestroy {
   currentStep = 1;
 
   warrantyId = '';
@@ -23,6 +24,8 @@ export class AlertNewPage implements OnInit {
   pushEnabled = true;
   emailEnabled = false;
 
+  private sub?: Subscription;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -32,6 +35,20 @@ export class AlertNewPage implements OnInit {
 
   ngOnInit() {
     this.warrantyId = this.route.snapshot.paramMap.get('warrantyId') || '';
+    this.loadWarranty();
+    this.sub = this.warrantyService.warranties$.subscribe(() => this.loadWarranty());
+  }
+
+  ionViewWillEnter() {
+    this.loadWarranty();
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
+
+  private loadWarranty() {
+    if (!this.warrantyId) return;
     this.warranty = this.warrantyService.getWarranty(this.warrantyId);
     this.productName = this.warranty ? getWarrantyTitle(this.warranty) : '';
   }
